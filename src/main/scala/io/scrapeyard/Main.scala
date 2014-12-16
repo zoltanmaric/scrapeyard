@@ -2,5 +2,6 @@ package io.scrapeyard
 
 object Main extends App {
   println("hello world")
-  Scraper.doIt
+  val result = Scraper.doIt
+  println(result)
 }

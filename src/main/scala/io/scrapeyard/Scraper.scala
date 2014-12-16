@@ -7,7 +7,7 @@ object Scraper extends Firefox {
 
   val host = "http://www.qatarairways.com"
 
-  def doIt: Unit = {
+  def doIt: String = {
     go to host
     println(pageTitle)
 
@@ -41,6 +41,8 @@ object Scraper extends Firefox {
 
     click on "bookFlight"
 
-//    Thread.sleep(10000)
+    Thread.sleep(10000)
+
+    find("tripGrandTotal").get.text
   }
 }
