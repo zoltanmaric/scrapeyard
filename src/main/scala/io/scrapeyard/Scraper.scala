@@ -7,37 +7,37 @@ object Scraper extends Firefox {
 
   val host = "http://www.qatarairways.com"
 
-  def doIt: String = {
+  def doIt(arrival: String): String = {
     go to host
     println(pageTitle)
 
-    implicitlyWait(Span(10, Seconds))
+    implicitlyWait(Span(20, Seconds))
 
     Thread.sleep(5000)
 
     click on "book"
-    Thread.sleep(2000)
+    Thread.sleep(500)
 
     click on "FromTemp"
-    Thread.sleep(2000)
+    Thread.sleep(500)
     enter("zagreb")
-    Thread.sleep(2000)
+    Thread.sleep(500)
     enter("\t")
 
-    Thread.sleep(2000)
+    Thread.sleep(500)
     enter("bali")
-    Thread.sleep(2000)
+    Thread.sleep(500)
     enter("\t")
 
     click on "departing"
-    Thread.sleep(1000)
+    Thread.sleep(500)
     enter("21-May-2015")
-    Thread.sleep(1000)
+    Thread.sleep(500)
 
     click on "returning"
-    Thread.sleep(1000)
-    enter("31-Jul-2015")
-    Thread.sleep(1000)
+    Thread.sleep(500)
+    enter(arrival)
+    Thread.sleep(500)
 
     click on "bookFlight"
 
