@@ -29,5 +29,5 @@ object Main extends App {
     pair
   }.toMap
 
-  println(arrivalsToPrices)
+  println(arrivalsToPrices.mkString("\n"))
 }
