@@ -1,6 +1,7 @@
 package io.scrapeyard
 
 import org.joda.time.format.DateTimeFormat
+import org.openqa.selenium.WebDriver
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
 import org.scalatest.selenium.Firefox
@@ -14,21 +15,24 @@ object QatarScraper extends Firefox with Matchers with Eventually {
   val host = "http://www.qatarairways.com"
   val fmt = DateTimeFormat.forPattern("dd-MMM-yyyy")
 
-  def doIt(ps: SearchParams): String = {
+  def doIt(ps: SearchParams): SearchResult = {
     go to host
     println(pageTitle)
 
     implicitlyWait(Span(20, Seconds))
 
-    Thread.sleep(5000)
+    eventually(assert(find("bookcont").isDefined))
 
-    click on "book"
-    Thread.sleep(500)
+    eventually(timeout(2 minutes)) {
+      click on "book"
+      eventually(timeout(5 seconds))(assert(find("FromTemp").get.isDisplayed))
+    }
 
     click on "FromTemp"
-    Thread.sleep(500)
-    enter(ps.origin)
-    Thread.sleep(500)
+    eventually {
+      enter(ps.origin)
+      assert(find("ui-active-menuitem").get.isDisplayed)
+    }
     enter("\t")
 
     Thread.sleep(500)
@@ -48,12 +52,31 @@ object QatarScraper extends Firefox with Matchers with Eventually {
 
     click on "bookFlight"
 
-//    Thread.sleep(10000)
+    //    Thread.sleep(10000)
 
-    eventually(timeout(2 minutes)) {
+    val price = eventually(timeout(2 minutes)) {
       val total = find("tripGrandTotal").get.text
       total.length should be > 4
       total
+    }
+
+    SearchResult(ps, price, host)
+  }
+
+
+  /** * Ensure the page is loaded and AJAX calls are completed using jQuery. */
+  def pageIsLoadedAndAjaxIsCompleted()(implicit driver: WebDriver) {
+    eventually {
+      withClue("Ajax calls may not have completed within time specified") {
+        executeScript("return jQuery.active")
+          .asInstanceOf[Long] shouldBe (0)
+      }
+    }
+    eventually {
+      withClue("Document ready state was not [complete] within time specified by eventually clause.") {
+        executeScript("return document.readyState")
+          .asInstanceOf[String] shouldEqual ("complete")
+      }
     }
   }
 }

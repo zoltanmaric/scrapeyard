@@ -13,7 +13,7 @@ object MomondoScraper extends Firefox with Matchers with Eventually {
 
   val host = "http://momondo.com"
 
-  def doIt(ps: SearchParams): String = {
+  def doIt(ps: SearchParams): SearchResult = {
     val fmt = DateTimeFormat.forPattern("dd-MM-yyyy")
     val org = ps.origin
     val dst = ps.destination
@@ -35,7 +35,8 @@ object MomondoScraper extends Firefox with Matchers with Eventually {
 
     val value = find(cssSelector("span[class=value]")).get.text
     val currency = find(cssSelector("span[class=unit]")).get.text
+    val price = value + " " + currency
 
-    value + " " + currency
+    SearchResult(ps, price, query)
   }
 }
