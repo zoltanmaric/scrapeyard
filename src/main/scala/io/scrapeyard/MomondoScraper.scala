@@ -4,7 +4,7 @@ import org.joda.time.format.DateTimeFormat
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
 import org.scalatest.selenium.Firefox
-import org.scalatest.time.{Seconds, Span}
+import org.scalatest.time.{Minutes, Span}
 
 import scala.concurrent.duration._
 
@@ -26,10 +26,10 @@ object MomondoScraper extends Firefox with Matchers with Eventually {
     go to query
     println(pageTitle)
 
-    implicitlyWait(Span(120, Seconds))
+    implicitlyWait(Span(2, Minutes))
 
 
-    eventually (timeout(300 seconds)){
+    eventually (timeout(5 minutes)){
       find("searchProgressText").get.text should be("Search complete")
     }
 
