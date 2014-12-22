@@ -1,11 +1,15 @@
 package io.scrapeyard
 
 import org.joda.time.format.DateTimeFormat
+import org.scalatest.Matchers
+import org.scalatest.concurrent.Eventually
 import org.scalatest.selenium.Firefox
 import org.scalatest.time.{Seconds, Span}
 
+import scala.concurrent.duration._
+
 // val ff = new FirefoxDriver with Firefox
-object QatarScraper extends Firefox {
+object QatarScraper extends Firefox with Matchers with Eventually {
 
   val host = "http://www.qatarairways.com"
   val fmt = DateTimeFormat.forPattern("dd-MMM-yyyy")
@@ -44,8 +48,12 @@ object QatarScraper extends Firefox {
 
     click on "bookFlight"
 
-    Thread.sleep(10000)
+//    Thread.sleep(10000)
 
-    find("tripGrandTotal").get.text
+    eventually(timeout(2 minutes)) {
+      val total = find("tripGrandTotal").get.text
+      total.length should be > 4
+      total
+    }
   }
 }
