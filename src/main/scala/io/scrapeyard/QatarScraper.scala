@@ -4,7 +4,7 @@ import org.scalatest.selenium.Firefox
 import org.scalatest.time.{Seconds, Span}
 
 // val ff = new FirefoxDriver with Firefox
-object Scraper extends Firefox {
+object QatarScraper extends Firefox {
 
   val host = "http://www.qatarairways.com"
 

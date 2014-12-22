@@ -4,6 +4,10 @@ import org.joda.time.Instant
 
 object Main extends App {
   println("hello world")
+
+  val dep = Instant.parse("2015-05-21T00:00:00.000Z")
+  val ret = Instant.parse("2015-07-31T00:00:00.000Z")
+  val params = SearchParams("ZAG", "DPS", dep, ret)
 //
 //  val arrivals = Seq(
 //    "25-Jul-2015",
@@ -33,9 +37,5 @@ object Main extends App {
 //
 //  println(arrivalsToPrices.mkString("\n"))
 
-  val dep = Instant.parse("2015-05-21T00:00:00.000Z")
-  val ret = Instant.parse("2015-07-31T00:00:00.000Z")
-  val params = SearchParams("ZAG", "DPS", dep, ret)
-
-  println(MomondoScraper.doIt(params))
+//  println(MomondoScraper.doIt(params))
 }
