@@ -26,7 +26,7 @@ object Scraper extends Firefox {
     enter("\t")
 
     Thread.sleep(500)
-    enter("bali")
+    enter("singapore")
     Thread.sleep(500)
     enter("\t")
 
