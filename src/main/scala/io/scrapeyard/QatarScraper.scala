@@ -1,7 +1,6 @@
 package io.scrapeyard
 
 import org.joda.time.format.DateTimeFormat
-import org.openqa.selenium.WebDriver
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
 import org.scalatest.selenium.Firefox
@@ -23,60 +22,37 @@ object QatarScraper extends Firefox with Matchers with Eventually {
 
     eventually(assert(find("bookcont").isDefined))
 
-    eventually(timeout(2 minutes)) {
-      click on "book"
-      eventually(timeout(5 seconds))(assert(find("FromTemp").get.isDisplayed))
-    }
-
+    click on "book"
     click on "FromTemp"
+    enter(ps.origin)
+
     eventually {
-      enter(ps.origin)
       assert(find("ui-active-menuitem").get.isDisplayed)
     }
-    enter("\t")
+    click on "ui-active-menuitem"
 
-    Thread.sleep(500)
+    click on "ToTemp"
     enter(ps.destination)
-    Thread.sleep(500)
-    enter("\t")
+
+    eventually {
+      assert(find("ui-active-menuitem").get.isDisplayed)
+    }
+    click on "ui-active-menuitem"
 
     click on "departing"
-    Thread.sleep(500)
     enter(fmt.print(ps.departure))
-    Thread.sleep(500)
 
     click on "returning"
-    Thread.sleep(500)
     enter(fmt.print(ps.returning))
-    Thread.sleep(500)
 
     click on "bookFlight"
-
-    //    Thread.sleep(10000)
 
     val price = eventually(timeout(2 minutes)) {
       val total = find("tripGrandTotal").get.text
       total.length should be > 4
-      total
+      total.replaceAll("""\s""", " ")
     }
 
     SearchResult(ps, price, host)
-  }
-
-
-  /** * Ensure the page is loaded and AJAX calls are completed using jQuery. */
-  def pageIsLoadedAndAjaxIsCompleted()(implicit driver: WebDriver) {
-    eventually {
-      withClue("Ajax calls may not have completed within time specified") {
-        executeScript("return jQuery.active")
-          .asInstanceOf[Long] shouldBe (0)
-      }
-    }
-    eventually {
-      withClue("Document ready state was not [complete] within time specified by eventually clause.") {
-        executeScript("return document.readyState")
-          .asInstanceOf[String] shouldEqual ("complete")
-      }
-    }
   }
 }
