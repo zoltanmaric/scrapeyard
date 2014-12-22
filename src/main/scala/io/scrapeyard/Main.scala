@@ -8,6 +8,7 @@ object Main extends App {
   val dep = Instant.parse("2015-05-21T00:00:00.000Z")
   val ret = Instant.parse("2015-07-31T00:00:00.000Z")
   val params = SearchParams("ZAG", "DPS", dep, ret)
+  println(QatarScraper.doIt(params))
 //
 //  val arrivals = Seq(
 //    "25-Jul-2015",

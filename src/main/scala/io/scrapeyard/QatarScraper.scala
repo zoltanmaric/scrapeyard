@@ -1,5 +1,6 @@
 package io.scrapeyard
 
+import org.joda.time.format.DateTimeFormat
 import org.scalatest.selenium.Firefox
 import org.scalatest.time.{Seconds, Span}
 
@@ -7,8 +8,9 @@ import org.scalatest.time.{Seconds, Span}
 object QatarScraper extends Firefox {
 
   val host = "http://www.qatarairways.com"
+  val fmt = DateTimeFormat.forPattern("dd-MMM-yyyy")
 
-  def doIt(arrival: String): String = {
+  def doIt(ps: SearchParams): String = {
     go to host
     println(pageTitle)
 
@@ -21,23 +23,23 @@ object QatarScraper extends Firefox {
 
     click on "FromTemp"
     Thread.sleep(500)
-    enter("zagreb")
+    enter(ps.origin)
     Thread.sleep(500)
     enter("\t")
 
     Thread.sleep(500)
-    enter("singapore")
+    enter(ps.destination)
     Thread.sleep(500)
     enter("\t")
 
     click on "departing"
     Thread.sleep(500)
-    enter("21-May-2015")
+    enter(fmt.print(ps.departure))
     Thread.sleep(500)
 
     click on "returning"
     Thread.sleep(500)
-    enter(arrival)
+    enter(fmt.print(ps.returning))
     Thread.sleep(500)
 
     click on "bookFlight"
