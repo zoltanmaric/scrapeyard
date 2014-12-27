@@ -1,10 +1,9 @@
 package io.scrapeyard
 
 import org.joda.time.DateTime
-import org.scalatest.prop.GeneratorDrivenPropertyChecks
 import org.scalatest.{Matchers, WordSpecLike}
 
-class DispatcherTest extends WordSpecLike with GeneratorDrivenPropertyChecks with Matchers {
+class DispatcherTest extends WordSpecLike with Matchers {
   // TODO: add some property-based tests
 
   "creates a search for each day in the time span" in {
