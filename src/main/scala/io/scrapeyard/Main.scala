@@ -1,14 +1,42 @@
 package io.scrapeyard
 
-import org.joda.time.Instant
+import org.joda.time.DateTime
+
+import scala.concurrent.{Await, Future}
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 
 object Main extends App {
   println("hello world")
 
-  val dep = Instant.parse("2015-05-21T00:00:00.000Z")
-  val ret = Instant.parse("2015-07-31T00:00:00.000Z")
-  val params = SearchParams("ZAG", "DPS", dep, ret)
-  println(QatarScraper.doIt(params))
+  val origs = Set("ZAG", "BUD")
+  val dests = Set("DPS")
+  val depFrom = DateTime.parse("2015-05-21T00:00:00.000Z")
+  val depUntil = DateTime.parse("2015-05-22T00:00:00.000Z")
+  val retFrom = DateTime.parse("2015-07-20T00:00:00.000Z")
+  val retUntil = DateTime.parse("2015-07-31T00:00:00.000Z")
+  val criteria = BatchSearchCriteria(origs, dests, depFrom, depUntil, retFrom, retUntil)
+  val paramList = Dispatcher.toSearchParams(criteria)
+
+  private val qatarFuture = Future {
+    paramList.foreach { ps =>
+      val res = QatarScraper.doIt(ps)
+      println(res)
+    }
+  }
+  qatarFuture.onComplete(println(_))
+
+  private val momondoFuture = Future {
+    paramList.foreach { ps =>
+      val res = MomondoScraper.doIt(ps)
+      println(res)
+    }
+  }
+  momondoFuture.onComplete(println(_))
+
+  Await.ready(qatarFuture, 1 hour)
+  Await.ready(momondoFuture, 1 hour)
+
 //
 //  val arrivals = Seq(
 //    "25-Jul-2015",

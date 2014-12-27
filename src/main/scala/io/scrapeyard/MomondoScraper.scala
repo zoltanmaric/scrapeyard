@@ -26,10 +26,10 @@ object MomondoScraper extends Firefox with Matchers with Eventually {
     go to query
     println(pageTitle)
 
-    implicitlyWait(Span(2, Minutes))
+    implicitlyWait(Span(3, Minutes))
 
 
-    eventually (timeout(5 minutes)){
+    eventually (timeout(10 minutes)){
       find("searchProgressText").get.text should be("Search complete")
     }
 
