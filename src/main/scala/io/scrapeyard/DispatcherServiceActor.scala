@@ -7,7 +7,7 @@ import scala.util.{Failure, Success, Try}
 import scala.concurrent.duration._
 import scala.concurrent.ExecutionContext.Implicits.global
 
-object Main extends App {
+object DispatcherServiceActor extends App {
 
   val origs = Set("ZAG", "BUD")
   val dests = Set("DPS")
