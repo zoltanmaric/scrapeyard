@@ -1,14 +1,8 @@
 package io.scrapeyard
 
-import akka.actor.Actor
-import org.joda.time.DateTime
+import akka.actor.{Props, ActorRef, Actor}
 import spray.http.MediaTypes._
 import spray.routing.HttpService
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
-import scala.util.{Failure, Success, Try}
 
 class SearchServiceActor extends Actor with SearchService {
 
@@ -16,67 +10,20 @@ class SearchServiceActor extends Actor with SearchService {
   // connects the services environment to the enclosing actor or test
   def actorRefFactory = context
 
+  def dispatcher = context.actorOf(Props[Dispatcher], "dispatcher")
+
   // this actor only runs our route, but you could add
   // other things here, like request stream processing
   // or timeout handling
   def receive = runRoute(searchRoute)
-
-  def dispatch: Unit = {
-    val origs = Set("ZAG", "BUD")
-    val dests = Set("DPS")
-    val depFrom = DateTime.parse("2015-05-20T00:00:00.000Z")
-    val depUntil = DateTime.parse("2015-05-22T00:00:00.000Z")
-    val retFrom = DateTime.parse("2015-07-20T00:00:00.000Z")
-    val retUntil = DateTime.parse("2015-07-31T00:00:00.000Z")
-    val criteria = BatchSearchCriteria(origs, dests, depFrom, depUntil, retFrom, retUntil)
-    val paramList = Dispatcher.toSearchParams(criteria)
-
-    //  private val qatarFuture = Future {
-    //    paramList.foreach { ps =>
-    //      Try(QatarScraper.doIt(ps)) match {
-    //        case Success(r) => println(r)
-    //        case Failure(t) => println((ps, t))
-    //      }
-    //    }
-    //  }
-
-    val airHrFuture = Future {
-      paramList.foreach { ps =>
-        Try(AirHrScraper.doIt(ps)) match {
-          case Success(r) => println(r)
-          case Failure(t) => println((ps, t))
-        }
-      }
-    }
-
-    //  private val momondoFuture = Future {
-    //    paramList.foreach { ps =>
-    //      Try(MomondoScraper.doIt(ps)) match {
-    //        case Success(r) => println(r)
-    //        case Failure(t) => println((ps, t))
-    //      }
-    //    }
-    //  }
-    //  momondoFuture.onComplete(println(_))
-
-    //  private val airHrFuture = Future {
-    //    paramList.foreach { ps =>
-    //      val res = Try(AirHrScraper.doIt(ps))
-    //      println(res)
-    //    }
-    //  }
-    //  airHrFuture.onComplete(println(_))
-
-    //  Await.ready(qatarFuture, 1 hour)
-    //  Await.ready(momondoFuture, 1 hour)
-    Await.ready(airHrFuture, 1 hour)
-  }
 }
 
 // this trait defines our service behavior independently from the service actor
 trait SearchService extends HttpService {
 
-  import BatchSearchCriteriaJsonSupport._
+  import io.scrapeyard.BatchSearchCriteriaJsonSupport._
+
+  def dispatcher: ActorRef
 
   val searchRoute =
     path("search") {
@@ -94,6 +41,7 @@ trait SearchService extends HttpService {
       post {
         respondWithMediaType(`application/json`)
         entity(as[BatchSearchCriteria]) { bsc =>
+          dispatcher ! bsc
           println(bsc)
           complete(bsc)
         }
