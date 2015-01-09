@@ -5,10 +5,10 @@ import org.joda.time.DateTime
 import spray.http.MediaTypes._
 import spray.routing.HttpService
 
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
-import scala.concurrent.duration._
-import scala.concurrent.ExecutionContext.Implicits.global
 
 class DispatcherServiceActor extends Actor with DispatcherService {
 
@@ -19,7 +19,7 @@ class DispatcherServiceActor extends Actor with DispatcherService {
   // this actor only runs our route, but you could add
   // other things here, like request stream processing
   // or timeout handling
-  def receive = runRoute(rootRoute)
+  def receive = runRoute(searchRoute)
 
   def dispatch: Unit = {
     val origs = Set("ZAG", "BUD")
@@ -76,8 +76,10 @@ class DispatcherServiceActor extends Actor with DispatcherService {
 // this trait defines our service behavior independently from the service actor
 trait DispatcherService extends HttpService {
 
-  val rootRoute =
-    path("") {
+  import BatchSearchCriteriaJsonSupport._
+
+  val searchRoute =
+    path("search") {
       get {
         respondWithMediaType(`text/html`) { // XML is marshalled to `text/xml` by default, so we simply override here
           complete {
@@ -87,6 +89,13 @@ trait DispatcherService extends HttpService {
               </body>
             </html>
           }
+        }
+      } ~
+      post {
+        respondWithMediaType(`application/json`)
+        entity(as[BatchSearchCriteria]) { bsc =>
+          println(bsc)
+          complete(bsc)
         }
       }
     }
