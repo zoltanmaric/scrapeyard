@@ -10,7 +10,7 @@ import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
 
-class DispatcherServiceActor extends Actor with DispatcherService {
+class SearchServiceActor extends Actor with SearchService {
 
   // the HttpService trait defines only one abstract member, which
   // connects the services environment to the enclosing actor or test
@@ -74,7 +74,7 @@ class DispatcherServiceActor extends Actor with DispatcherService {
 }
 
 // this trait defines our service behavior independently from the service actor
-trait DispatcherService extends HttpService {
+trait SearchService extends HttpService {
 
   import BatchSearchCriteriaJsonSupport._
 
