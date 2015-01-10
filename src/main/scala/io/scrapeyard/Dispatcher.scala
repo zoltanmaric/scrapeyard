@@ -1,7 +1,10 @@
 package io.scrapeyard
 
-import akka.actor.{Actor, ActorLogging}
+import akka.actor.{Actor, ActorLogging, Props}
+import io.scrapeyard.Mailer.SendEmail
 import io.scrapeyard.Models.{BatchSearchCriteria, SearchParams, SearchRequest}
+import spray.json._
+import ModelsJsonSupport._
 
 import scala.language.postfixOps
 import scala.util.{Failure, Try}
@@ -9,6 +12,9 @@ import scala.util.{Failure, Try}
 class Dispatcher extends Actor with ActorLogging {
 
   import io.scrapeyard.Dispatcher._
+
+
+  val mailer = context.actorOf(Props[MailerActor], "mailer")
 
   def receive: Receive = {
     case req: SearchRequest => dispatch(req)
@@ -21,10 +27,8 @@ class Dispatcher extends Actor with ActorLogging {
 
     val (succs, fails) = searchTries.partition(_.isSuccess)
 
-    // TODO: send email
     val results = succs map (_.get)
-    log.info("Successful search results:")
-    results.foreach(r => log.info(r.toString))
+    mailer ! SendEmail(req.email, "Search results", results.toJson.prettyPrint)
 
     if (fails.nonEmpty) {
       log.warning("Failed searches: ")
@@ -53,7 +57,7 @@ object Dispatcher {
       dest <- criteria.dests
       dep <- depDates
       ret <- retDates
-    } yield SearchParams(orig, dest, dep.toInstant, ret.toInstant)
+    } yield SearchParams(orig, dest, dep, ret)
 
     searches.toVector
   }

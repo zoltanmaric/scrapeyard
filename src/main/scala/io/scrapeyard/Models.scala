@@ -1,7 +1,6 @@
 package io.scrapeyard
 
-import io.scrapeyard.Models.SearchRequest
-import org.joda.time.{Instant, DateTime}
+import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormat
 import spray.httpx.SprayJsonSupport
 import spray.json._
@@ -21,8 +20,8 @@ object Models {
   case class SearchParams(
                            origin: String,
                            destination: String,
-                           departure: Instant,
-                           returning: Instant
+                           departure: DateTime,
+                           returning: DateTime
                            )
 
   case class SearchResult(params: SearchParams, price: String, url: String)
@@ -31,7 +30,7 @@ object Models {
 }
 
 object ModelsJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
-  import io.scrapeyard.Models.BatchSearchCriteria
+  import Models._
   
   implicit object DateTimeJsonFormat extends RootJsonFormat[DateTime] {
     val Formatter = DateTimeFormat.forPattern("yyyy-MM-dd").withZoneUTC
@@ -46,6 +45,8 @@ object ModelsJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
 
   implicit val BscFormat = jsonFormat6(BatchSearchCriteria)
   implicit val SearchReqFormat = jsonFormat2(SearchRequest)
+  implicit val SearchParamsFormat = jsonFormat4(SearchParams)
+  implicit val SearchResFormat = jsonFormat3(SearchResult)
 }
 
 

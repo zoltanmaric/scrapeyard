@@ -4,7 +4,12 @@ package io.scrapeyard
 import javax.mail._
 import javax.mail.internet._
 
+import akka.actor.Actor
+
 object Mailer {
+
+  case class SendEmail(to: String, subject: String, body: String)
+
   val From = "no-reply@scrapeyard.io"
 
   def sendMail(address: String, subject: String, body: String): Unit = {
@@ -22,5 +27,13 @@ object Mailer {
 
     // And send it
     Transport.send(message)
+  }
+}
+
+class MailerActor extends Actor {
+  import Mailer._
+
+  def receive = {
+    case SendEmail(to, subject, body) => sendMail(to, subject, body)
   }
 }
