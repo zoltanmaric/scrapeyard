@@ -23,7 +23,11 @@ class Dispatcher extends Actor with ActorLogging {
   def dispatch(req: SearchRequest) = {
     val paramList = toSearchParams(req.criteria)
 
-    val searchTries = paramList map { ps => Try(AirHrScraper.doIt(ps)) }
+    val searchTries = paramList flatMap { ps => Seq(
+      Try(AirHrScraper.doIt(ps)),
+      Try(MomondoScraper.doIt(ps)),
+      Try(QatarScraper.doIt(ps))
+    )}
 
     val (succs, fails) = searchTries.partition(_.isSuccess)
 
