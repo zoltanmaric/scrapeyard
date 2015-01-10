@@ -14,7 +14,7 @@ libraryDependencies ++= {
     "org.seleniumhq.selenium" % "selenium-java"     % "2.44.0",
     "com.github.nscala-time"  % "nscala-time_2.11"  % "1.6.0",
     "org.jvnet.mock-javamail" % "mock-javamail"     % "1.9" % "test",
-    "javax.mail"              % "mail"              % "1.4.7",
+    "me.lessis"               % "courier_2.11"      % "0.1.3",
 
     "io.spray"            %%  "spray-can"     % sprayV,
     "io.spray"            %%  "spray-routing" % sprayV,

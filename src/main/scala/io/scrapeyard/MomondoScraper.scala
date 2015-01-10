@@ -26,7 +26,6 @@ object MomondoScraper extends Firefox with Matchers with Eventually {
       s"&SD1=$org&SDP1=$ret&AD=1&TK=ECO&DO=false&NA=false#Search=true&TripType=2&SegNo=2" +
       s"&SO0=$org&SD0=$dst&SDP0=$dep&SO1=$dst&SD1=$org&SDP1=$ret&AD=1&TK=ECO&DO=false&NA=false"
     go to query
-    println(pageTitle)
 
     implicitlyWait(Span(3, Minutes))
 

@@ -1,7 +1,7 @@
 package io.scrapeyard
 
 import akka.actor.{Actor, ActorLogging, Props}
-import io.scrapeyard.Mailer.SendEmail
+import io.scrapeyard.ScrapeMailer.SendEmail
 import io.scrapeyard.Models.{BatchSearchCriteria, SearchParams, SearchRequest}
 import spray.json._
 import ModelsJsonSupport._
