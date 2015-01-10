@@ -25,7 +25,7 @@ object BatchSearchCriteriaJsonSupport extends DefaultJsonProtocol with SprayJson
     }
   }
 
-  implicit val PortofolioFormats = jsonFormat6(BatchSearchCriteria)
+  implicit val PortfolioFormats = jsonFormat6(BatchSearchCriteria)
 }
 
 

@@ -10,7 +10,7 @@ class SearchServiceActor extends Actor with SearchService {
   // connects the services environment to the enclosing actor or test
   def actorRefFactory = context
 
-  def dispatcher = context.actorOf(Props[Dispatcher], "dispatcher")
+  def createDispatcher = context.actorOf(Props[Dispatcher], "dispatcher")
 
   // this actor only runs our route, but you could add
   // other things here, like request stream processing
@@ -23,7 +23,9 @@ trait SearchService extends HttpService {
 
   import io.scrapeyard.BatchSearchCriteriaJsonSupport._
 
-  def dispatcher: ActorRef
+  def createDispatcher: ActorRef
+
+  lazy val dispatcher = createDispatcher
 
   val searchRoute =
     path("search") {

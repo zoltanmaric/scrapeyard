@@ -10,6 +10,8 @@ import scala.concurrent.ExecutionContext.Implicits.global
 
 class Dispatcher extends Actor {
 
+  import Dispatcher._
+
   def receive: Receive = {
     case bsc: BatchSearchCriteria => dispatch(bsc)
   }
@@ -57,7 +59,9 @@ class Dispatcher extends Actor {
     //  Await.ready(momondoFuture, 1 hour)
     Await.ready(airHrFuture, 1 hour)
   }
+}
 
+object Dispatcher {
   def toSearchParams(criteria: BatchSearchCriteria): Seq[SearchParams] = {
     var depDates = Vector(criteria.depFrom)
     while(depDates.last.compareTo(criteria.depUntil) < 0) {
