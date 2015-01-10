@@ -3,6 +3,7 @@ A simple REST API for scheduling asynchronous batches of flight searches
 
 The API accepts JSON requests containing the following information:
 
+* an email address
 * a set of viable departure airports
 * a set of viable destination airports
 * a range of viable departure dates
