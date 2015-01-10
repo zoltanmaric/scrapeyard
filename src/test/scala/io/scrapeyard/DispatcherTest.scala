@@ -1,5 +1,6 @@
 package io.scrapeyard
 
+import io.scrapeyard.Models.BatchSearchCriteria
 import org.joda.time.DateTime
 import org.scalatest.{Matchers, WordSpecLike}
 
