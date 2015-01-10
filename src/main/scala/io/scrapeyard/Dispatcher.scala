@@ -7,7 +7,7 @@ import spray.json._
 import ModelsJsonSupport._
 
 import scala.language.postfixOps
-import scala.util.{Failure, Try}
+import scala.util.{Success, Failure, Try}
 
 class Dispatcher extends Actor with ActorLogging {
 
@@ -34,6 +34,8 @@ class Dispatcher extends Actor with ActorLogging {
       log.warning("Failed searches: ")
       fails.foreach {
         case Failure(t) => log.error(t, t.getMessage)
+        case Success(s) => log.error(
+          s"Unexpected successful search found in filtered failed searches: $s")
       }
     }
   }
