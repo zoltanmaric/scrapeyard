@@ -1,6 +1,7 @@
 package io.scrapeyard
 
 import akka.actor.{Props, ActorRef, Actor}
+import io.scrapeyard.Models.BatchSearchCriteria
 import spray.http.MediaTypes._
 import spray.routing.HttpService
 
@@ -21,7 +22,7 @@ class SearchServiceActor extends Actor with SearchService {
 // this trait defines our service behavior independently from the service actor
 trait SearchService extends HttpService {
 
-  import io.scrapeyard.BatchSearchCriteriaJsonSupport._
+  import io.scrapeyard.ModelsJsonSupport._
 
   def createDispatcher: ActorRef
 

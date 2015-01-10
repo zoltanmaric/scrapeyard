@@ -1,10 +1,12 @@
 package io.scrapeyard
 
 import akka.actor.Actor
+import io.scrapeyard.Models.{SearchParams, BatchSearchCriteria}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
 import scala.util.{Failure, Success, Try}
+import language.postfixOps
 
 import scala.concurrent.ExecutionContext.Implicits.global
 

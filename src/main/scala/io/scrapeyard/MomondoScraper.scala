@@ -1,10 +1,12 @@
 package io.scrapeyard
 
+import io.scrapeyard.Models.{SearchParams, SearchResult}
 import org.joda.time.format.DateTimeFormat
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
 import org.scalatest.selenium.Firefox
 import org.scalatest.time.{Minutes, Span}
+import language.postfixOps
 
 import scala.concurrent.duration._
 

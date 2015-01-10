@@ -1,5 +1,6 @@
 package io.scrapeyard
 
+import io.scrapeyard.Models.{SearchResult, SearchParams}
 import org.joda.time.format.DateTimeFormat
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
@@ -7,6 +8,7 @@ import org.scalatest.selenium.Firefox
 import org.scalatest.time.{Seconds, Span}
 
 import scala.concurrent.duration._
+import language.postfixOps
 
 // val ff = new FirefoxDriver with Firefox
 object QatarScraper extends Firefox with Matchers with Eventually {
