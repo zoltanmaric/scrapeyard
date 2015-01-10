@@ -1,7 +1,7 @@
 package io.scrapeyard
 
 import akka.actor.Actor
-import io.scrapeyard.Models.{SearchParams, BatchSearchCriteria}
+import io.scrapeyard.Models.{SearchRequest, SearchParams, BatchSearchCriteria}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, Future}
@@ -15,11 +15,13 @@ class Dispatcher extends Actor {
   import Dispatcher._
 
   def receive: Receive = {
-    case bsc: BatchSearchCriteria => dispatch(bsc)
+    case req: SearchRequest => dispatch(req)
   }
 
-  def dispatch(criteria: BatchSearchCriteria) = {
-    val paramList = toSearchParams(criteria)
+  def dispatch(req: SearchRequest) = {
+    val paramList = toSearchParams(req.criteria)
+
+    // TODO: remove futures and await. Do it in the same thread instead
 
     //  private val qatarFuture = Future {
     //    paramList.foreach { ps =>

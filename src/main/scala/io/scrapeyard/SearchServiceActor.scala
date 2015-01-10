@@ -1,7 +1,7 @@
 package io.scrapeyard
 
-import akka.actor.{Props, ActorRef, Actor}
-import io.scrapeyard.Models.BatchSearchCriteria
+import akka.actor.{Actor, ActorRef, Props}
+import io.scrapeyard.Models.SearchRequest
 import spray.http.MediaTypes._
 import spray.routing.HttpService
 
@@ -43,10 +43,10 @@ trait SearchService extends HttpService {
       } ~
       post {
         respondWithMediaType(`application/json`)
-        entity(as[BatchSearchCriteria]) { bsc =>
-          dispatcher ! bsc
-          println(bsc)
-          complete(bsc)
+        entity(as[SearchRequest]) { req =>
+          dispatcher ! req
+          println(req)
+          complete(req)
         }
       }
     }
