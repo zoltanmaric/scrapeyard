@@ -1,18 +1,14 @@
 package io.scrapeyard
 
-import akka.actor.Actor
-import io.scrapeyard.Models.{SearchRequest, SearchParams, BatchSearchCriteria}
+import akka.actor.{Actor, ActorLogging}
+import io.scrapeyard.Models.{BatchSearchCriteria, SearchParams, SearchRequest}
 
-import scala.concurrent.duration._
-import scala.concurrent.{Await, Future}
-import scala.util.{Failure, Success, Try}
-import language.postfixOps
+import scala.language.postfixOps
+import scala.util.{Failure, Try}
 
-import scala.concurrent.ExecutionContext.Implicits.global
+class Dispatcher extends Actor with ActorLogging {
 
-class Dispatcher extends Actor {
-
-  import Dispatcher._
+  import io.scrapeyard.Dispatcher._
 
   def receive: Receive = {
     case req: SearchRequest => dispatch(req)
@@ -21,47 +17,21 @@ class Dispatcher extends Actor {
   def dispatch(req: SearchRequest) = {
     val paramList = toSearchParams(req.criteria)
 
-    // TODO: remove futures and await. Do it in the same thread instead
+    val searchTries = paramList map { ps => Try(AirHrScraper.doIt(ps)) }
 
-    //  private val qatarFuture = Future {
-    //    paramList.foreach { ps =>
-    //      Try(QatarScraper.doIt(ps)) match {
-    //        case Success(r) => println(r)
-    //        case Failure(t) => println((ps, t))
-    //      }
-    //    }
-    //  }
+    val (succs, fails) = searchTries.partition(_.isSuccess)
 
-    val airHrFuture = Future {
-      paramList.foreach { ps =>
-        Try(AirHrScraper.doIt(ps)) match {
-          case Success(r) => println(r)
-          case Failure(t) => println((ps, t))
-        }
+    // TODO: send email
+    val results = succs map (_.get)
+    log.info("Successful search results:")
+    results.foreach(r => log.info(r.toString))
+
+    if (fails.nonEmpty) {
+      log.warning("Failed searches: ")
+      fails.foreach {
+        case Failure(t) => log.error(t, t.getMessage)
       }
     }
-
-    //  private val momondoFuture = Future {
-    //    paramList.foreach { ps =>
-    //      Try(MomondoScraper.doIt(ps)) match {
-    //        case Success(r) => println(r)
-    //        case Failure(t) => println((ps, t))
-    //      }
-    //    }
-    //  }
-    //  momondoFuture.onComplete(println(_))
-
-    //  private val airHrFuture = Future {
-    //    paramList.foreach { ps =>
-    //      val res = Try(AirHrScraper.doIt(ps))
-    //      println(res)
-    //    }
-    //  }
-    //  airHrFuture.onComplete(println(_))
-
-    //  Await.ready(qatarFuture, 1 hour)
-    //  Await.ready(momondoFuture, 1 hour)
-    Await.ready(airHrFuture, 1 hour)
   }
 }
 
