@@ -12,12 +12,15 @@ Here's an example request:
 
 ```json
 {
- "origs": ["ZAG"],
- "dests": ["DPS"],
- "depFrom": "2014-10-15",
- "depUntil": "2014-10-16",
- "retFrom": "2014-11-15",
- "retUntil": "2015-10-16"
+ "email": "zoltanmaric@github.com",
+ "criteria": {
+  "origs": ["ZAG", "BUD"],
+  "dests": ["DPS"],
+  "depFrom": "2015-10-15",
+  "depUntil": "2015-10-16",
+  "retFrom": "2015-11-15",
+  "retUntil": "2015-11-26"
+ }
 }
 ```
 
