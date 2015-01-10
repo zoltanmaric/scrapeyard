@@ -14,7 +14,7 @@ object ScrapeMailer {
   val From = "no-reply@scrapeyard.io"
 
   def sendMail(address: String, subject: String, body: String): Unit = {
-    val mailer = Mailer("localhost", 25).auth(false)()
+    val mailer = Mailer("localhost", 25)()
 
     mailer(Envelope.from(new InternetAddress(From))
       .to(new InternetAddress(address))
