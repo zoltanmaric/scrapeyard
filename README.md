@@ -1,13 +1,20 @@
 # scrapeyard
-A simple REST API for scheduling asynchronous batches of flight searches
+### A simple REST API for scheduling batches of flight searches.
 
-The API accepts JSON requests containing the following information:
+1. Set your search for **more than one** departure and destination airport
+2. Give it **a range of departure and return dates**
+3. Let it tumble through all the combinations for you, on multiple search engines
+4. Get notified of the results vie email
+
+## Usage
+
+The API accepts JSON POST requests on `/search` containing the following information:
 
 * an email address
-* a set of viable departure airports
-* a set of viable destination airports
-* a range of viable departure dates
-* a range of viable return dates
+* a set of suitable departure airports
+* a set of suitable destination airports
+* a range of suitable departure dates
+* a range of suitable return dates
 
 Here's an example request:
 
@@ -24,6 +31,14 @@ Here's an example request:
  }
 }
 ```
+
+which can be interpreted as
+
+* Depart from Zagreb **or** Budapest
+* Arrive in Denpasar (Bali)
+* Depart on Jul 20, 2015
+* Return between Jul 29, 2015 and Jul 30, 2015
+* When done, send search results to `zoltanmaric@github.com`
 
 The server schedules one search for each combination of departure and destination airports, and departure and return dates; and sends the user an e-mail containing all the search results.
 The following is the body of an example result email:
