@@ -4,13 +4,11 @@ import io.scrapeyard.Models.{SearchParams, SearchResult}
 import org.joda.time.format.DateTimeFormat
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
-import org.scalatest.selenium.Firefox
-import org.scalatest.time.{Minutes, Span}
-import language.postfixOps
 
 import scala.concurrent.duration._
+import scala.language.postfixOps
 // val ff = new FirefoxDriver with Firefox
-object AirHrScraper extends Firefox with Matchers with Eventually {
+object AirHrScraper extends SilentHtmlUnit with Matchers with Eventually {
 
   val host = "http://air.hr"
 
@@ -24,8 +22,7 @@ object AirHrScraper extends Firefox with Matchers with Eventually {
     go to query
     println(pageTitle)
 
-    implicitlyWait(Span(3, Minutes))
-
+    implicitlyWait(3 minutes)
 
     eventually (timeout(3 minutes)){
       val p = find(cssSelector("div[class^=flight_price_v1] span[class=pull-right]")).get.text

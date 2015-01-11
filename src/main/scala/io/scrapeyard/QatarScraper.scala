@@ -1,14 +1,13 @@
 package io.scrapeyard
 
-import io.scrapeyard.Models.{SearchResult, SearchParams}
+import io.scrapeyard.Models.{SearchParams, SearchResult}
 import org.joda.time.format.DateTimeFormat
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
 import org.scalatest.selenium.Firefox
-import org.scalatest.time.{Seconds, Span}
 
 import scala.concurrent.duration._
-import language.postfixOps
+import scala.language.postfixOps
 
 // val ff = new FirefoxDriver with Firefox
 object QatarScraper extends Firefox with Matchers with Eventually {
@@ -20,7 +19,7 @@ object QatarScraper extends Firefox with Matchers with Eventually {
     go to host
     println(pageTitle)
 
-    implicitlyWait(Span(20, Seconds))
+    implicitlyWait(20 seconds)
 
     eventually(assert(find("bookcont").isDefined))
 
