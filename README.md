@@ -4,7 +4,7 @@
 1. Set your search for **more than one** departure and destination airport
 2. Give it **a range of departure and return dates**
 3. Let it tumble through all the combinations for you, on multiple search engines
-4. Get notified of the results vie email
+4. Get notified of the results via email
 
 ## Usage
 
