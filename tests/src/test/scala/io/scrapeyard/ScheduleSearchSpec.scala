@@ -61,12 +61,10 @@ class ScheduleSearchSpec extends WordSpecLike with Matchers with Eventually {
     val inbox = store.getFolder("inbox")
 
     eventually(timeout(10 minutes)) {
-      inbox.open(Folder.READ_ONLY)
+      inbox.open(Folder.READ_WRITE)
       val messages = inbox.search(unseenFlagTerm)
       // if any messages found, mark them read
-      messages.foreach { msg =>
-        inbox.getMessage(msg.getMessageNumber).getContent
-      }
+      inbox.setFlags(messages, seen, true)
       inbox.close(false)
 
       messages.length should be > 0
