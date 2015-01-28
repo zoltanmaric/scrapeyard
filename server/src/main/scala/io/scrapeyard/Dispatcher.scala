@@ -13,6 +13,8 @@ class Dispatcher extends Actor with ActorLogging {
 
   import io.scrapeyard.Dispatcher._
 
+  val scrapers: Seq[Scraper] = Seq(AirHrScraper, MomondoScraper, QatarScraper)
+
 
   val mailer = context.actorOf(Props[MailerActor], "mailer")
 
@@ -23,11 +25,11 @@ class Dispatcher extends Actor with ActorLogging {
   def dispatch(req: SearchRequest) = {
     val paramList = toSearchParams(req.criteria)
 
-    val searchTries = paramList flatMap { ps => Seq(
-      Try(AirHrScraper.doIt(ps)),
-      Try(MomondoScraper.doIt(ps)),
-      Try(QatarScraper.doIt(ps))
-    )}
+    val searchTries = paramList flatMap { ps =>
+      // Each set of search parameters can be executed in
+      // parallel on each scraper (browser instance)
+      scrapers.par.map(_.scrape(ps))
+    }
 
     val (succs, fails) = searchTries.partition(_.isSuccess)
 

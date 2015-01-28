@@ -1,23 +1,23 @@
 package io.scrapeyard
 
 import io.scrapeyard.Models.{SearchParams, SearchResult}
-import org.joda.time.format.DateTimeFormat
+import org.joda.time.format.{DateTimeFormatter, DateTimeFormat}
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
 import org.scalatest.selenium.Firefox
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
+import scala.util.Try
 
 // val ff = new FirefoxDriver with Firefox
-object QatarScraper extends Firefox with Matchers with Eventually {
+object QatarScraper extends Scraper with Firefox {
 
   val host = "http://www.qatarairways.com"
-  val fmt = DateTimeFormat.forPattern("dd-MMM-yyyy")
 
-  def doIt(ps: SearchParams): SearchResult = {
+  def scrape(ps: SearchParams): Try[SearchResult] = Try {
+    val StringSearchParams(org, dst, dep, ret) = toStringSearchParams(ps)
     go to host
-    println(pageTitle)
 
     implicitlyWait(20 seconds)
 
@@ -25,7 +25,7 @@ object QatarScraper extends Firefox with Matchers with Eventually {
 
     click on "book"
     click on "FromTemp"
-    enter(ps.origin)
+    enter(org)
 
     eventually {
       assert(find("ui-active-menuitem").get.isDisplayed)
@@ -33,7 +33,7 @@ object QatarScraper extends Firefox with Matchers with Eventually {
     click on "ui-active-menuitem"
 
     click on "ToTemp"
-    enter(ps.destination)
+    enter(dst)
 
     eventually {
       assert(find("ui-active-menuitem").get.isDisplayed)
@@ -41,10 +41,10 @@ object QatarScraper extends Firefox with Matchers with Eventually {
     click on "ui-active-menuitem"
 
     click on "departing"
-    enter(fmt.print(ps.departure))
+    enter(dep)
 
     click on "returning"
-    enter(fmt.print(ps.returning))
+    enter(ret)
 
     click on "bookFlight"
 
@@ -56,4 +56,7 @@ object QatarScraper extends Firefox with Matchers with Eventually {
 
     SearchResult(ps, price, host)
   }
+
+  override protected def dateFormatter: DateTimeFormatter =
+    DateTimeFormat.forPattern("dd-MMM-yyyy")
 }
