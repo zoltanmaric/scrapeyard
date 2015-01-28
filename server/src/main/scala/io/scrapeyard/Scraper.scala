@@ -15,6 +15,11 @@ trait Scraper extends Matchers with Eventually {
 
   case class StringSearchParams(origin: String, destination: String, departure: String, returning: String)
 
+  /**
+   * Used to convert DateTime objects to strings based on the
+   * scraper-specific DateTimeFormatter. Converting it to a
+   * new case class enables simple extraction into separate values.
+   */
   protected def toStringSearchParams(ps: SearchParams): StringSearchParams = {
     ps match {
       case SearchParams(org, dst, dep, ret) => StringSearchParams(
