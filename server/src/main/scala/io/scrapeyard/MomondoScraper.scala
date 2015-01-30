@@ -2,14 +2,17 @@ package io.scrapeyard
 
 import io.scrapeyard.Models.{SearchParams, SearchResult}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
-import org.scalatest.selenium.Firefox
+import org.openqa.selenium.phantomjs.PhantomJSDriver
+import org.scalatest.selenium.WebBrowser
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.Try
 
 // val ff = new FirefoxDriver with Firefox
-object MomondoScraper extends Scraper with Firefox {
+object MomondoScraper extends Scraper with WebBrowser {
+
+  implicit val webDriver = new PhantomJSDriver()
 
   override protected def dateFormatter: DateTimeFormatter =
     DateTimeFormat.forPattern("dd-MM-yyyy")

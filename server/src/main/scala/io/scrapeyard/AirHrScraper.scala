@@ -2,13 +2,17 @@ package io.scrapeyard
 
 import io.scrapeyard.Models.{SearchParams, SearchResult}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
+import org.openqa.selenium.phantomjs.PhantomJSDriver
+import org.scalatest.selenium.WebBrowser
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.Try
 
 // val ff = new FirefoxDriver with Firefox
-object AirHrScraper extends Scraper with SilentHtmlUnit {
+object AirHrScraper extends Scraper with WebBrowser {
+
+  implicit val webDriver = new PhantomJSDriver()
 
   def scrape(ps: SearchParams): Try[SearchResult] = Try {
     val StringSearchParams(org, dst, dep, ret) = toStringSearchParams(ps)
