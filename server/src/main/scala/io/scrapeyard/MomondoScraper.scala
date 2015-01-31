@@ -2,7 +2,6 @@ package io.scrapeyard
 
 import io.scrapeyard.Models.{SearchParams, SearchResult}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
-import org.openqa.selenium.phantomjs.PhantomJSDriver
 import org.scalatest.selenium.WebBrowser
 
 import scala.concurrent.duration._
@@ -12,7 +11,7 @@ import scala.util.Try
 // val ff = new FirefoxDriver with Firefox
 object MomondoScraper extends Scraper with WebBrowser {
 
-  implicit val webDriver = new PhantomJSDriver()
+  implicit val webDriver = new SilentPhantomJSDriver()
 
   override protected def dateFormatter: DateTimeFormatter =
     DateTimeFormat.forPattern("dd-MM-yyyy")
@@ -27,7 +26,7 @@ object MomondoScraper extends Scraper with WebBrowser {
 
     implicitlyWait(3 minutes)
 
-    eventually (timeout(10 minutes)){
+    eventually (timeout(10 minutes), interval(200 millis)){
       find("searchProgressText").get.text should be ("Search complete")
     }
 

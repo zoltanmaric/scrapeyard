@@ -48,7 +48,7 @@ object QatarScraper extends Scraper with Firefox {
 
     click on "bookFlight"
 
-    val price = eventually(timeout(2 minutes)) {
+    val price = eventually(timeout(2 minutes), interval(200 millis)) {
       val total = find("tripGrandTotal").get.text
       total.length should be > 4
       total.replaceAll("""\s""", " ")
