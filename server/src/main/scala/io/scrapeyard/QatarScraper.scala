@@ -1,6 +1,6 @@
 package io.scrapeyard
 
-import io.scrapeyard.Models.{SearchParams, SearchResult}
+import io.scrapeyard.Models.{SearchYield, SearchParams, SearchResult}
 import org.joda.time.format.{DateTimeFormatter, DateTimeFormat}
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
@@ -54,7 +54,7 @@ object QatarScraper extends Scraper with Firefox {
       total.replaceAll("""\s""", " ")
     }
 
-    SearchResult(ps, price, host)
+    SearchResult(ps, SearchYield(price, host))
   }
 
   override protected def dateFormatter: DateTimeFormatter =

@@ -1,6 +1,6 @@
 package io.scrapeyard
 
-import io.scrapeyard.Models.{SearchParams, SearchResult}
+import io.scrapeyard.Models.{SearchYield, SearchParams, SearchResult}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.scalatest.selenium.WebBrowser
 
@@ -26,7 +26,7 @@ object AirHrScraper extends Scraper with WebBrowser {
 
     val price = find(cssSelector("div[class^=flight_price_v1] span[class=pull-right]")).get.text
 
-    SearchResult(ps, price, query)
+    SearchResult(ps, SearchYield(price, query))
   }
 
   override protected def dateFormatter: DateTimeFormatter = DateTimeFormat.forPattern("dd.MM.yyyy")

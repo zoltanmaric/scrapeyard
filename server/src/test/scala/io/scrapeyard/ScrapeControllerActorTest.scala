@@ -2,7 +2,7 @@ package io.scrapeyard
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.testkit.TestProbe
-import io.scrapeyard.Models.{BatchSearchCriteria, SearchParams, SearchResult}
+import io.scrapeyard.Models.{SearchYield, BatchSearchCriteria, SearchParams, SearchResult}
 import org.joda.time.DateTime
 import org.scalatest.WordSpecLike
 
@@ -47,8 +47,8 @@ class ScrapeControllerActorTest extends WordSpecLike {
     val params2 = SearchParams("ZAG", "OST", dep, ret)
     scraper.expectMsgAllOf(2.seconds, params1, params2)
 
-    val res1 = Success(SearchResult(params1, "2 USD", "url1"))
-    val res2 = Success(SearchResult(params2, "4 USD", "url2"))
+    val res1 = Success(SearchResult(params1, SearchYield("2 USD", "url1")))
+    val res2 = Success(SearchResult(params2, SearchYield("4 USD", "url2")))
     scraper.send(controller, res1)
     scraper.send(controller, res2)
 

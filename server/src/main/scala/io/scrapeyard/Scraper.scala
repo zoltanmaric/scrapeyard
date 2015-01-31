@@ -1,11 +1,20 @@
 package io.scrapeyard
 
-import io.scrapeyard.Models.{SearchResult, SearchParams}
+import akka.actor.Actor
+import io.scrapeyard.Models.{SearchParams, SearchResult}
 import org.joda.time.format.DateTimeFormatter
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
 
 import scala.util.Try
+
+class ScraperActor(scraper: Scraper) extends Actor {
+  def receive = {
+    case ps: SearchParams =>
+      val triedResult = scraper.scrape(ps)
+      sender ! triedResult
+  }
+}
 
 trait Scraper extends Matchers with Eventually {
 

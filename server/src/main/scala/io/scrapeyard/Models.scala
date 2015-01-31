@@ -24,7 +24,9 @@ object Models {
                            returning: DateTime
                            )
 
-  case class SearchResult(params: SearchParams, price: String, url: String)
+  case class SearchYield(price: String, url: String)
+
+  case class SearchResult(params: SearchParams, yld: SearchYield)
   
   case class SearchResponse(email: String, results: Seq[SearchResult])
 }
@@ -46,7 +48,8 @@ object ModelsJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val BscFormat = jsonFormat6(BatchSearchCriteria)
   implicit val SearchReqFormat = jsonFormat2(SearchRequest)
   implicit val SearchParamsFormat = jsonFormat4(SearchParams)
-  implicit val SearchResFormat = jsonFormat3(SearchResult)
+  implicit val SearchYldFormat = jsonFormat2(SearchYield)
+  implicit val SearchResFormat = jsonFormat2(SearchResult)
 }
 
 
