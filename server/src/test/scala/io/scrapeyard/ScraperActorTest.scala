@@ -4,7 +4,7 @@ import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
 import io.scrapeyard.Models.{SearchParams, SearchYield}
 import org.joda.time.DateTime
-import org.joda.time.format.DateTimeFormatter
+import org.joda.time.format.{ISODateTimeFormat, DateTimeFormatter}
 import org.scalatest.{BeforeAndAfter, WordSpecLike}
 
 import scala.util.{Failure, Success, Try}
@@ -20,7 +20,8 @@ with ImplicitSender with WordSpecLike with BeforeAndAfter {
 
   trait FakeScraper extends Scraper {
     // not required
-    override protected def dateFormatter: DateTimeFormatter = _
+    override protected def dateFormatter: DateTimeFormatter =
+      ISODateTimeFormat.basicDate()
   }
 
   "A scraper actor" when {

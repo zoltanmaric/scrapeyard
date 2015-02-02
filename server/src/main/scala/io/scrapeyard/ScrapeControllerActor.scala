@@ -6,6 +6,8 @@ import io.scrapeyard.Models._
 import scala.util.{Failure, Success, Try}
 
 class ScrapeControllerActor extends Actor with ActorLogging {
+  import ScrapeController._
+
   var request: SearchRequest = _
   var paramSet = Set[SearchParams]()
   var results = Set[SearchResult]()
@@ -15,7 +17,7 @@ class ScrapeControllerActor extends Actor with ActorLogging {
   def awaitSearchRequest: Receive = {
     case ControllerReq(req, scraperRef) =>
       request = req
-      paramSet = Dispatcher.toSearchParams(req.criteria).toSet
+      paramSet = toSearchParams(req.criteria).toSet
       paramSet.foreach(scraperRef ! _)
       context.become(awaitResponses)
 
@@ -42,3 +44,29 @@ class ScrapeControllerActor extends Actor with ActorLogging {
 
 case class ControllerReq(req: SearchRequest, scraperRef: ActorRef)
 case class ControllerResp(req: SearchRequest, results: Set[SearchResult])
+
+
+
+object ScrapeController {
+  def toSearchParams(criteria: BatchSearchCriteria): Seq[SearchParams] = {
+    var depDates = Vector(criteria.depFrom)
+    while(depDates.last.compareTo(criteria.depUntil) < 0) {
+      depDates = depDates :+ depDates.last.plusDays(1)
+    }
+
+    var retDates = Vector(criteria.retFrom)
+    while(retDates.last.compareTo(criteria.retUntil) < 0) {
+      retDates = retDates :+ retDates.last.plusDays(1)
+    }
+
+
+    val searches = for {
+      orig <- criteria.origs
+      dest <- criteria.dests
+      dep <- depDates
+      ret <- retDates
+    } yield SearchParams(orig, dest, dep, ret)
+
+    searches.toVector
+  }
+}
