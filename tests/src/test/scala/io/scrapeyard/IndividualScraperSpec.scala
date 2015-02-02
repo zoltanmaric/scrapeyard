@@ -13,20 +13,20 @@ class IndividualScraperSpec extends WordSpecLike with Matchers {
   )
 
   "single search on air.hr scraper" in {
-    val res = AirHrScraper.scrape(params).get.yld
+    val res = AirHrScraper.scrape(params).get
     res.price should endWith ("HRK")
     res.url should startWith ("http://avio.air.hr")
   }
 
   "single search on momondo scraper" in {
-    val res = MomondoScraper.scrape(params).get.yld
+    val res = MomondoScraper.scrape(params).get
     res.price should endWith ("EUR")
     res.url should startWith ("http://www.momondo.com/flightsearch")
   }
 
   "single search on qatar scraper" in {
     val scraper = QatarScraper
-    val res = scraper.scrape(params).get.yld
+    val res = scraper.scrape(params).get
     res.price should endWith ("HRK")
     res.url should be ("http://www.qatarairways.com")
     scraper.close()(scraper.webDriver)
