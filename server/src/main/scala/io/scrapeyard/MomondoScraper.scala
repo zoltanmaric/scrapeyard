@@ -1,6 +1,6 @@
 package io.scrapeyard
 
-import io.scrapeyard.Models.{SearchYield, SearchParams, SearchResult}
+import io.scrapeyard.Models.{SearchParams, SearchYield}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.scalatest.selenium.WebBrowser
 
@@ -16,7 +16,7 @@ object MomondoScraper extends Scraper with WebBrowser {
   override protected def dateFormatter: DateTimeFormatter =
     DateTimeFormat.forPattern("dd-MM-yyyy")
 
-  def scrape(ps: SearchParams): Try[SearchResult] = Try {
+  override def scrape(ps: SearchParams): Try[SearchYield] = Try {
     val StringSearchParams(org, dst, dep, ret) = toStringSearchParams(ps)
     val query = s"http://www.momondo.com/flightsearch/?Search=true&TripType=2&SegNo=2" +
       s"&SO0=$org&SD0=$dst&SDP0=$dep&SO1=$dst" +
@@ -34,6 +34,6 @@ object MomondoScraper extends Scraper with WebBrowser {
     val currency = find(cssSelector("span[class=unit]")).get.text
     val price = value + " " + currency
 
-    SearchResult(ps, SearchYield(price, query))
+    SearchYield(price, query)
   }
 }

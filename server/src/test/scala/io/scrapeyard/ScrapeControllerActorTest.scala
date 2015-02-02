@@ -2,7 +2,7 @@ package io.scrapeyard
 
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.testkit.TestProbe
-import io.scrapeyard.Models.{SearchYield, BatchSearchCriteria, SearchParams, SearchResult}
+import io.scrapeyard.Models._
 import org.joda.time.DateTime
 import org.scalatest.WordSpecLike
 
@@ -41,19 +41,25 @@ class ScrapeControllerActorTest extends WordSpecLike {
       ret
     )
 
-    dispatcher.send(controller, SearchMsg(criteria, scraper.ref))
+    val req = SearchRequest("user@mail.com", criteria)
+
+    dispatcher.send(controller, ControllerReq(req, scraper.ref))
 
     val params1 = SearchParams("ZAG", "BRU", dep, ret)
     val params2 = SearchParams("ZAG", "OST", dep, ret)
     scraper.expectMsgAllOf(2.seconds, params1, params2)
 
-    val res1 = Success(SearchResult(params1, SearchYield("2 USD", "url1")))
-    val res2 = Success(SearchResult(params2, SearchYield("4 USD", "url2")))
-    scraper.send(controller, res1)
-    scraper.send(controller, res2)
+    val yld1 = SearchYield("2 USD", "url1")
+    val yld2 = SearchYield("4 USD", "url2")
+    scraper.send(controller, (params1, Success(yld1)))
+    scraper.send(controller, (params2, Success(yld2)))
 
-    val results = Seq(res1, res2)
-    dispatcher.expectMsg(2.seconds, results)
+    val results = Set(
+      SearchResult(params1, yld1),
+      SearchResult(params2, yld2)
+    )
+    val resp = ControllerResp(req, results)
+    dispatcher.expectMsg(2.seconds, resp)
 
     system.shutdown()
   }

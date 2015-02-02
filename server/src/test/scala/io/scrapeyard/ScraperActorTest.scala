@@ -2,7 +2,7 @@ package io.scrapeyard
 
 import akka.actor.{ActorSystem, Props}
 import akka.testkit.{ImplicitSender, TestKit}
-import io.scrapeyard.Models.{SearchYield, SearchParams, SearchResult}
+import io.scrapeyard.Models.{SearchParams, SearchYield}
 import org.joda.time.DateTime
 import org.joda.time.format.DateTimeFormatter
 import org.scalatest.{BeforeAndAfter, WordSpecLike}
@@ -20,22 +20,22 @@ with ImplicitSender with WordSpecLike with BeforeAndAfter {
 
   trait FakeScraper extends Scraper {
     // not required
-    override protected def dateFormatter: DateTimeFormatter = ???
+    override protected def dateFormatter: DateTimeFormatter = _
   }
 
   "A scraper actor" when {
 
     "scrape succeeds" should {
       "return a success message" in {
-        val success = Success(SearchResult(params, SearchYield("2 USD", "url1")))
+        val success = Success(SearchYield("2 USD", "url1"))
 
         val successScraper = new FakeScraper {
-          override def scrape(ps: SearchParams): Try[SearchResult] = success
+          override def scrape(ps: SearchParams): Try[SearchYield] = success
         }
 
         val scraper = system.actorOf(Props(new ScraperActor(successScraper)), "successScraper")
         scraper ! params
-        expectMsg(success)
+        expectMsg((params, success))
       }
     }
 
@@ -44,17 +44,13 @@ with ImplicitSender with WordSpecLike with BeforeAndAfter {
         val failure = Failure(new Exception())
 
         val failScraper = new FakeScraper {
-          override def scrape(ps: SearchParams): Try[SearchResult] = failure
+          override def scrape(ps: SearchParams): Try[SearchYield] = failure
         }
 
         val scraper = system.actorOf(Props(new ScraperActor(failScraper)), "failScraper")
         scraper ! params
-        expectMsg(failure)
+        expectMsg((params, failure))
       }
     }
-  }
-
-  after {
-    system.shutdown()
   }
 }

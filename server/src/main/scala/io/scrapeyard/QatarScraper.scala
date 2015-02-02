@@ -1,9 +1,7 @@
 package io.scrapeyard
 
-import io.scrapeyard.Models.{SearchYield, SearchParams, SearchResult}
-import org.joda.time.format.{DateTimeFormatter, DateTimeFormat}
-import org.scalatest.Matchers
-import org.scalatest.concurrent.Eventually
+import io.scrapeyard.Models.{SearchParams, SearchYield}
+import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.scalatest.selenium.Firefox
 
 import scala.concurrent.duration._
@@ -15,7 +13,7 @@ object QatarScraper extends Scraper with Firefox {
 
   val host = "http://www.qatarairways.com"
 
-  def scrape(ps: SearchParams): Try[SearchResult] = Try {
+  override def scrape(ps: SearchParams): Try[SearchYield] = Try {
     val StringSearchParams(org, dst, dep, ret) = toStringSearchParams(ps)
     go to host
 
@@ -54,7 +52,7 @@ object QatarScraper extends Scraper with Firefox {
       total.replaceAll("""\s""", " ")
     }
 
-    SearchResult(ps, SearchYield(price, host))
+    SearchYield(price, host)
   }
 
   override protected def dateFormatter: DateTimeFormatter =

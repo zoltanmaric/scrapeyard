@@ -1,7 +1,7 @@
 package io.scrapeyard
 
 import akka.actor.Actor
-import io.scrapeyard.Models.{SearchParams, SearchResult}
+import io.scrapeyard.Models.{SearchParams, SearchYield}
 import org.joda.time.format.DateTimeFormatter
 import org.scalatest.Matchers
 import org.scalatest.concurrent.Eventually
@@ -11,14 +11,14 @@ import scala.util.Try
 class ScraperActor(scraper: Scraper) extends Actor {
   def receive = {
     case ps: SearchParams =>
-      val triedResult = scraper.scrape(ps)
-      sender ! triedResult
+      val triedYield = scraper.scrape(ps)
+      sender ! (ps, triedYield)
   }
 }
 
 trait Scraper extends Matchers with Eventually {
 
-  def scrape(ps: SearchParams): Try[SearchResult]
+  def scrape(ps: SearchParams): Try[SearchYield]
 
   protected def dateFormatter: DateTimeFormatter
 

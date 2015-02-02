@@ -1,6 +1,6 @@
 package io.scrapeyard
 
-import io.scrapeyard.Models.{SearchYield, SearchParams, SearchResult}
+import io.scrapeyard.Models.{SearchParams, SearchYield}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
 import org.scalatest.selenium.WebBrowser
 
@@ -12,7 +12,7 @@ object AirHrScraper extends Scraper with WebBrowser {
 
   implicit val webDriver = new SilentPhantomJSDriver()
 
-  def scrape(ps: SearchParams): Try[SearchResult] = Try {
+  override def scrape(ps: SearchParams): Try[SearchYield] = Try {
     val StringSearchParams(org, dst, dep, ret) = toStringSearchParams(ps)
     val query = s"http://avio.air.hr/airhr/$org/$dst/$dep-$ret/1/0/0/rt"
     go to query
@@ -26,7 +26,7 @@ object AirHrScraper extends Scraper with WebBrowser {
 
     val price = find(cssSelector("div[class^=flight_price_v1] span[class=pull-right]")).get.text
 
-    SearchResult(ps, SearchYield(price, query))
+    SearchYield(price, query)
   }
 
   override protected def dateFormatter: DateTimeFormatter = DateTimeFormat.forPattern("dd.MM.yyyy")

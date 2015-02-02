@@ -1,53 +1,49 @@
 package io.scrapeyard
 
-import akka.actor.{Actor, ActorLogging, Props}
+import akka.actor.{ActorRef, Actor, ActorLogging, Props}
 import io.scrapeyard.ScrapeMailer.SendEmail
-import io.scrapeyard.Models.{BatchSearchCriteria, SearchParams, SearchRequest}
+import io.scrapeyard.Models.{SearchResult, BatchSearchCriteria, SearchParams, SearchRequest}
 import spray.json._
 import ModelsJsonSupport._
 
 import scala.language.postfixOps
 import scala.util.{Success, Failure, Try}
 
-class Dispatcher extends Actor with ActorLogging {
+class Dispatcher(scraperProps: Set[Props], mailerProps: Props) extends Actor
+with ActorLogging {
 
-  import io.scrapeyard.Dispatcher._
+  def this() {
+    this(
+      Set(
+        Props(new ScraperActor(AirHrScraper)),
+        Props(new ScraperActor(MomondoScraper)),
+        Props(new ScraperActor(QatarScraper))
+      ),
+      Props[MailerActor]
+    )
+  }
 
-  val scrapers: Seq[Scraper] = Seq(AirHrScraper, MomondoScraper, QatarScraper)
-
-
-  val mailer = context.actorOf(Props[MailerActor], "mailer")
+  val scrapers = scraperProps map {
+    prop => context.actorOf(prop)
+  }
 
   def receive: Receive = {
     case req: SearchRequest => dispatch(req)
+    case ControllerResp(req, results) =>
+      val mailer = context.actorOf(mailerProps, "mailer")
+      mailer ! SendEmail(req.email, "Search results", results.toJson.prettyPrint)
   }
 
-  def dispatch(req: SearchRequest) = {
-    val paramList = toSearchParams(req.criteria)
-
-    val searchTries = paramList flatMap { ps =>
-      // Each set of search parameters can be executed in
-      // parallel on each scraper (browser instance)
-      scrapers.par.map(_.scrape(ps))
-    }
-
-    val (succs, fails) = searchTries.partition(_.isSuccess)
-
-    val results = succs map (_.get)
-    mailer ! SendEmail(req.email, "Search results", results.toJson.prettyPrint)
-
-    if (fails.nonEmpty) {
-      log.warning("Failed searches: ")
-      fails.foreach {
-        case Failure(t) => log.error(t, t.getMessage)
-        case Success(s) => log.error(
-          s"Unexpected successful search found in filtered failed searches: $s")
-      }
+  def dispatch(req: SearchRequest): Unit = {
+    scrapers foreach { scraper =>
+      val controller = context.actorOf(Props[ScrapeControllerActor])
+      controller ! ControllerReq(req, scraper)
     }
   }
 }
 
 object Dispatcher {
+  // TODO: move to scrape controller
   def toSearchParams(criteria: BatchSearchCriteria): Seq[SearchParams] = {
     var depDates = Vector(criteria.depFrom)
     while(depDates.last.compareTo(criteria.depUntil) < 0) {

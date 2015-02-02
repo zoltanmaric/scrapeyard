@@ -1,33 +1,38 @@
 package io.scrapeyard
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
-import io.scrapeyard.Models.{BatchSearchCriteria, SearchResult}
+import io.scrapeyard.Models._
 
-import scala.util.Try
+import scala.util.{Failure, Success, Try}
 
 class ScrapeControllerActor extends Actor with ActorLogging {
-  var numSearches = 0
-  var results = Vector[Try[SearchResult]]()
+  var request: SearchRequest = _
+  var paramSet = Set[SearchParams]()
+  var results = Set[SearchResult]()
 
   override def receive: Receive = awaitSearchRequest
 
   def awaitSearchRequest: Receive = {
-    case SearchMsg(criteria, scraperRef) =>
-      val paramList = Dispatcher.toSearchParams(criteria)
-      // TODO: refactor SearchResult to a map of [SearchParams, (price, url)]
-      numSearches = paramList.length
-      paramList.foreach(scraperRef ! _)
+    case ControllerReq(req, scraperRef) =>
+      request = req
+      paramSet = Dispatcher.toSearchParams(req.criteria).toSet
+      paramSet.foreach(scraperRef ! _)
       context.become(awaitResponses)
 
     case e => log.error("Unexpected message received: " + e)
   }
 
   def awaitResponses: Receive = {
-    case res: Try[SearchResult] =>
-      results :+= res
-      numSearches -= 1
-      if (numSearches == 0) {
-        context.parent ! results
+    case (params: SearchParams, resp: Try[SearchYield]) =>
+      paramSet -= params
+      resp match {
+        case Success(yld) =>
+          results += SearchResult(params, yld)
+        case Failure(t) =>
+          log.error(t, "Search failed for {}", params)
+      }
+      if (paramSet.isEmpty) {
+        context.parent ! ControllerResp(request, results)
         context.stop(self)
       }
 
@@ -35,4 +40,5 @@ class ScrapeControllerActor extends Actor with ActorLogging {
   }
 }
 
-case class SearchMsg(criteria: BatchSearchCriteria, scraperRef: ActorRef)
+case class ControllerReq(req: SearchRequest, scraperRef: ActorRef)
+case class ControllerResp(req: SearchRequest, results: Set[SearchResult])
