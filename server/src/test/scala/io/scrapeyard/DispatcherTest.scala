@@ -13,8 +13,11 @@ with ImplicitSender with WordSpecLike with Matchers with BeforeAndAfterAll {
 
   "A dispatcher" when {
     "request message received" should {
-      "dispatch request to all scrapers and send mail with response" in {
-        val scraperProps = Set(Props[FakeScraperActorEur], Props[FakeScraperActorUsd])
+      "dispatches request to all scrapers and sends mail with results" in {
+        val scraperProps = Set(
+          Props(new FakeScraperActor("100", "EUR")),
+          Props(new FakeScraperActor("200", "USD"))
+        )
         val mailer = TestProbe()
         val mailerProps = Props(new Forwarder(mailer.ref))
         val dispatcher = system.actorOf(
@@ -73,16 +76,10 @@ class Forwarder(target: ActorRef) extends Actor {
   def receive = { case m => target forward m }
 }
 
-class FakeScraperActorEur extends Actor {
+class FakeScraperActor(amount: String, currency: String) extends Actor {
   def receive = {
     case ps: SearchParams =>
-      sender ! (ps, Success(SearchYield("100", "EUR")))
+      sender ! (ps, Success(SearchYield(amount, currency)))
   }
 }
 
-class FakeScraperActorUsd extends Actor {
-  def receive = {
-    case ps: SearchParams =>
-      sender ! (ps, Success(SearchYield("200", "USD")))
-  }
-}
