@@ -8,16 +8,14 @@ import scala.util.{Failure, Success, Try}
 class ScrapeControllerActor extends Actor with ActorLogging {
   import ScrapeController._
 
-  var request: SearchRequest = _
   var paramSet = Set[SearchParams]()
   var results = Set[SearchResult]()
 
   override def receive: Receive = awaitSearchRequest
 
   def awaitSearchRequest: Receive = {
-    case ControllerReq(req, scraperRef) =>
-      request = req
-      paramSet = toSearchParams(req.criteria).toSet
+    case ControllerReq(criteria, scraperRef) =>
+      paramSet = toSearchParams(criteria).toSet
       paramSet.foreach(scraperRef ! _)
       context.become(awaitResponses)
 
@@ -34,7 +32,7 @@ class ScrapeControllerActor extends Actor with ActorLogging {
           log.error(t, "Search failed for {}", params)
       }
       if (paramSet.isEmpty) {
-        context.parent ! ControllerResp(request, results)
+        context.parent ! results
         context.stop(self)
       }
 
@@ -42,12 +40,9 @@ class ScrapeControllerActor extends Actor with ActorLogging {
   }
 }
 
-case class ControllerReq(req: SearchRequest, scraperRef: ActorRef)
-case class ControllerResp(req: SearchRequest, results: Set[SearchResult])
-
-
-
 object ScrapeController {
+  case class ControllerReq(criteria: BatchSearchCriteria, scraperRef: ActorRef)
+
   def toSearchParams(criteria: BatchSearchCriteria): Seq[SearchParams] = {
     var depDates = Vector(criteria.depFrom)
     while(depDates.last.compareTo(criteria.depUntil) < 0) {

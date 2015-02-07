@@ -3,6 +3,7 @@ package io.scrapeyard
 import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.testkit.TestProbe
 import io.scrapeyard.Models._
+import io.scrapeyard.ScrapeController.ControllerReq
 import org.joda.time.DateTime
 import org.scalatest.WordSpecLike
 
@@ -41,9 +42,7 @@ class ScrapeControllerActorTest extends WordSpecLike {
       ret
     )
 
-    val req = SearchRequest("user@mail.com", criteria)
-
-    dispatcher.send(controller, ControllerReq(req, scraper.ref))
+    dispatcher.send(controller, ControllerReq(criteria, scraper.ref))
 
     val params1 = SearchParams("ZAG", "BRU", dep, ret)
     val params2 = SearchParams("ZAG", "OST", dep, ret)
@@ -58,8 +57,8 @@ class ScrapeControllerActorTest extends WordSpecLike {
       SearchResult(params1, yld1),
       SearchResult(params2, yld2)
     )
-    val resp = ControllerResp(req, results)
-    dispatcher.expectMsg(2.seconds, resp)
+
+    dispatcher.expectMsg(2.seconds, results)
 
     system.shutdown()
   }
