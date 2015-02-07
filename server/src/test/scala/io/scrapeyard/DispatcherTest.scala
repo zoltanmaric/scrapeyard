@@ -1,21 +1,20 @@
 package io.scrapeyard
 
-import akka.actor.{ActorRef, Actor, Props, ActorSystem}
+import akka.actor._
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import io.scrapeyard.Models._
-import io.scrapeyard.ScrapeMailer.SendEmail
 import org.joda.time.DateTime
-import org.scalatest.{Matchers, WordSpecLike}
+import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.util.Success
 
 class DispatcherTest extends TestKit(ActorSystem("TestSys"))
-with ImplicitSender with WordSpecLike with Matchers {
+with ImplicitSender with WordSpecLike with Matchers with BeforeAndAfterAll {
 
   "A dispatcher" when {
     "request message received" should {
       "dispatch request to all scrapers and send mail with response" in {
-        val scraperProps = Set(Props[FakeScraperActor])
+        val scraperProps = Set(Props[FakeScraperActorEur], Props[FakeScraperActorUsd])
         val mailer = TestProbe()
         val mailerProps = Props(new Forwarder(mailer.ref))
         val dispatcher = system.actorOf(
@@ -44,31 +43,46 @@ with ImplicitSender with WordSpecLike with Matchers {
 
         val results = Set(
           SearchResult(params1, SearchYield("100", "EUR")),
-          SearchResult(params2, SearchYield("100", "EUR"))
+          SearchResult(params2, SearchYield("100", "EUR")),
+          SearchResult(params1, SearchYield("200", "USD")),
+          SearchResult(params2, SearchYield("200", "USD"))
         )
 
-        import spray.json._
-        import ModelsJsonSupport._
-
-        val expected = SendEmail(
+        val expected = SendResults(
           "user@mail.com",
           "Search results",
-          results.toJson.prettyPrint
+          results
         )
 
         mailer.expectMsg(expected)
+
+        import scala.concurrent.duration._
+        import scala.language.postfixOps
+        val dispWatch = TestProbe()
+        dispWatch watch dispatcher
+        // verify that actor is stopped
+        dispWatch.expectMsgPF(2 seconds) { case Terminated(_) => true }
       }
     }
   }
+
+  override protected def afterAll(): Unit = system.shutdown()
 }
 
 class Forwarder(target: ActorRef) extends Actor {
   def receive = { case m => target forward m }
 }
 
-class FakeScraperActor extends Actor {
+class FakeScraperActorEur extends Actor {
   def receive = {
     case ps: SearchParams =>
       sender ! (ps, Success(SearchYield("100", "EUR")))
+  }
+}
+
+class FakeScraperActorUsd extends Actor {
+  def receive = {
+    case ps: SearchParams =>
+      sender ! (ps, Success(SearchYield("200", "USD")))
   }
 }

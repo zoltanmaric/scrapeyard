@@ -3,14 +3,13 @@ package io.scrapeyard
 import javax.mail.internet._
 import com.typesafe.config.ConfigFactory
 import courier._, Defaults._
+import io.scrapeyard.Models.SearchResult
 
 import scala.concurrent.ExecutionContext.global
 
 import akka.actor.{ActorLogging, Actor}
 
 object ScrapeMailer {
-
-  case class SendEmail(to: String, subject: String, body: String)
 
   val From = "no-reply@scrapeyard.io"
 
@@ -30,11 +29,16 @@ object ScrapeMailer {
   }
 }
 
+case class SendResults(to: String, subject: String, results: Set[SearchResult])
+
 class MailerActor extends Actor with ActorLogging {
   import ScrapeMailer._
+  import spray.json._
+  import ModelsJsonSupport._
 
   def receive = {
-    case SendEmail(to, subject, body) =>
+    case SendResults(to, subject, results) =>
+      val body = results.toJson.prettyPrint
       log.debug(s"sending email: $to:\n$body")
       sendMail(to, subject, body)
   }

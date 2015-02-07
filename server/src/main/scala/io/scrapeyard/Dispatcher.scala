@@ -1,13 +1,9 @@
 package io.scrapeyard
 
-import akka.actor.{ActorRef, Actor, ActorLogging, Props}
-import io.scrapeyard.ScrapeMailer.SendEmail
-import io.scrapeyard.Models.{SearchResult, BatchSearchCriteria, SearchParams, SearchRequest}
-import spray.json._
-import ModelsJsonSupport._
+import akka.actor.{Actor, ActorLogging, ActorRef, Props}
+import io.scrapeyard.Models.SearchRequest
 
 import scala.language.postfixOps
-import scala.util.{Success, Failure, Try}
 
 class Dispatcher(scraperProps: Set[Props], mailerProps: Props) extends Actor
 with ActorLogging {
@@ -27,17 +23,32 @@ with ActorLogging {
     prop => context.actorOf(prop)
   }
 
-  def receive: Receive = {
-    case req: SearchRequest => dispatch(req)
-    case ControllerResp(req, results) =>
-      val mailer = context.actorOf(mailerProps, "mailer")
-      mailer ! SendEmail(req.email, "Search results", results.toJson.prettyPrint)
+  var controllers = Set[ActorRef]()
+  var responseMap = Map[ActorRef, ControllerResp]()
+  var reqEmail: String = _
+
+  def receive: Receive = expectReq
+
+  def expectReq: Receive = {
+    case req: SearchRequest =>
+      reqEmail = req.email
+      controllers = scrapers.map(_ => context.actorOf(Props[ScrapeControllerActor]))
+      controllers zip scrapers foreach {
+        case (c, s) => c ! ControllerReq(req, s)
+      }
+      context.become(expectResp)
   }
 
-  def dispatch(req: SearchRequest): Unit = {
-    scrapers foreach { scraper =>
-      val controller = context.actorOf(Props[ScrapeControllerActor])
-      controller ! ControllerReq(req, scraper)
-    }
+  def expectResp: Receive = {
+    case resp: ControllerResp =>
+      responseMap += (sender -> resp)
+      if (responseMap.keys == controllers) {
+        val results = responseMap.flatMap {
+          case (_, ControllerResp(_, res)) => res
+        }.toSet
+        val mailer = context.actorOf(mailerProps)
+        mailer ! SendResults(reqEmail, "Search results", results)
+        context.stop(self)
+      }
   }
 }
