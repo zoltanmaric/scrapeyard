@@ -14,14 +14,14 @@ with ImplicitSender with WordSpecLike with Matchers with BeforeAndAfterAll {
   "A dispatcher" when {
     "request message received" should {
       "dispatches request to all scrapers and sends mail with results" in {
-        val scraperProps = Set(
-          Props(new FakeScraperActor("100", "EUR")),
-          Props(new FakeScraperActor("200", "USD"))
+        val scrapers = Set(
+          system.actorOf(Props(new FakeScraperActor("100", "EUR"))),
+          system.actorOf(Props(new FakeScraperActor("200", "USD")))
         )
         val mailer = TestProbe()
         val mailerProps = Props(new Forwarder(mailer.ref))
         val dispatcher = system.actorOf(
-          Props(new Dispatcher(scraperProps, mailerProps)), "dispatcher")
+          Props(new Dispatcher(scrapers, mailerProps)), "dispatcher")
 
         val dep = DateTime.parse("2015-05-20T00:00:00Z")
         val ret = DateTime.parse("2015-07-20T00:00:00Z")

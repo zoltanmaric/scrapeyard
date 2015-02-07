@@ -6,23 +6,8 @@ import io.scrapeyard.ScrapeController.ControllerReq
 
 import scala.language.postfixOps
 
-class Dispatcher(scraperProps: Set[Props], mailerProps: Props) extends Actor
+class Dispatcher(scrapers: Set[ActorRef], mailerProps: Props) extends Actor
 with ActorLogging {
-
-  def this() {
-    this(
-      Set(
-        Props(new ScraperActor(AirHrScraper)),
-        Props(new ScraperActor(MomondoScraper)),
-        Props(new ScraperActor(QatarScraper))
-      ),
-      Props[MailerActor]
-    )
-  }
-
-  val scrapers = scraperProps map {
-    prop => context.actorOf(prop)
-  }
 
   var controllers = Set[ActorRef]()
   var responseMap = Map[ActorRef, Set[SearchResult]]()

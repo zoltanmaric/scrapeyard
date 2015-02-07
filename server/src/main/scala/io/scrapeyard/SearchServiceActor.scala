@@ -11,7 +11,21 @@ class SearchServiceActor extends Actor with SearchService {
   // connects the services environment to the enclosing actor or test
   def actorRefFactory = context
 
-  def createDispatcher = context.actorOf(Props[Dispatcher], "dispatcher")
+  lazy val scrapers: Set[ActorRef] = {
+    val scraperProps = Map(
+      "airHrScraper" -> Props(new ScraperActor(AirHrScraper)),
+      "momondoScraper" -> Props(new ScraperActor(MomondoScraper)),
+      "qatarScraper" -> Props(new ScraperActor(QatarScraper))
+    )
+
+    scraperProps.map {
+      case (name, props) => context.actorOf(props, name)
+    }.toSet
+  }
+
+  val mailerProps = Props[MailerActor]
+
+  def createDispatcher = context.actorOf(Props(new Dispatcher(scrapers, mailerProps)))
 
   // this actor only runs our route, but you could add
   // other things here, like request stream processing
@@ -25,8 +39,6 @@ trait SearchService extends HttpService {
   import io.scrapeyard.ModelsJsonSupport._
 
   def createDispatcher: ActorRef
-
-  lazy val dispatcher = createDispatcher
 
   val searchRoute =
     path("search") {
@@ -44,6 +56,7 @@ trait SearchService extends HttpService {
       post {
         respondWithMediaType(`application/json`)
         entity(as[SearchRequest]) { req =>
+          val dispatcher = createDispatcher
           dispatcher ! req
           println(req)
           complete(req)
