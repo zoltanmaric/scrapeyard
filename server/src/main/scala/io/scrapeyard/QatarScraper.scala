@@ -21,22 +21,32 @@ object QatarScraper extends Scraper with Firefox {
 
     eventually(assert(find("bookcont").isDefined))
 
-    click on "book"
-    click on "FromTemp"
-    enter(org)
+    eventually(timeout(2 minutes)) {
+      click on "book"
+      textField("FromTemp").clear()
+      click on "FromTemp"
+      enter(org)
 
-    eventually {
-      assert(find("ui-active-menuitem").get.isDisplayed)
+      eventually {
+        assert(find("ui-active-menuitem").get.isDisplayed)
+      }
+      click on "ui-active-menuitem"
+
+      assert(find("remFrom").isDefined)
     }
-    click on "ui-active-menuitem"
 
-    click on "ToTemp"
-    enter(dst)
+    eventually(timeout(2 minutes)) {
+      textField("ToTemp").clear()
+      click on "ToTemp"
+      enter(dst)
 
-    eventually {
-      assert(find("ui-active-menuitem").get.isDisplayed)
+      eventually {
+        assert(find("ui-active-menuitem").get.isDisplayed)
+      }
+      click on "ui-active-menuitem"
+
+      assert(find("remTo").isDefined)
     }
-    click on "ui-active-menuitem"
 
     click on "departing"
     enter(dep)
