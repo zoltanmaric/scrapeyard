@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+    <!--See http://stackoverflow.com/questions/5660956/is-there-any-way-to-start-with-a-post-request-using-selenium-->
+    <!--and http://stackoverflow.com/questions/133925/javascript-post-request-like-a-form-submit-->
+    <!-- Doesn't work for Qatar Airways, but I'll leave it here if a future site works with a proxied POST request. -->
+    <form id="dynForm" action="https://booking.qatarairways.com/qribe-web/public/showBooking.action?widget=BF&selLang=en" method="post">
+        <input type="hidden" name="minPurTime" value="24+%5E">
+        <input type="hidden" name="addTaxToFare" value="Y">
+        <input type="hidden" name="from" value="Zagreb+%28ZAG%29">
+        <input type="hidden" name="fromStation" value="ZAG">
+        <input type="hidden" name="to" value="Bali%2FDenpasar+%28DPS%29">
+        <input type="hidden" name="toStation" value="DPS">
+        <input type="hidden" name="tripType" value="R">
+        <input type="hidden" name="departing" value="15-Jul-2015">
+        <input type="hidden" name="returning" value="29-Jul-2015">
+        <input type="hidden" name="adults" value="1">
+        <input type="hidden" name="children" value="0">
+        <input type="hidden" name="infants" value="0">
+        <input type="hidden" name="bookingClass" value="E">
+        <input type="hidden" name="searchType" value="F">
+        <input type="hidden" name="promoCode" value="">
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
