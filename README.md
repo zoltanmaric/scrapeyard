@@ -102,4 +102,4 @@ password=<gmail-password>
 
 ### Browsers
 
-The server internally runs browsers to scrape search engines. It currently works with Firefox and PhantomJS, both of which have to be installed on the machine running the server.
+The server internally runs browsers to scrape search engines. It currently works with [Firefox](https://www.mozilla.org/en-US/firefox/new/) and [PhantomJS](http://phantomjs.org/download.html), both of which have to be installed on the machine running the server.
