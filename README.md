@@ -91,7 +91,7 @@ The search is performed by scraping various flight search engine sites. Currentl
 
 ## Prerequisites
 
-### Gmali
+### Gmail
 
 To send email notifications, the server currently requires a working Gmail account. To set this up, create a file called `secret.properties` in `server/src/main/resources` with the following contents:
 
