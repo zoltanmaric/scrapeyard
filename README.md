@@ -91,13 +91,15 @@ The search is performed by scraping various flight search engine sites. Currentl
 
 ## Prerequisites
 
-The server implementation currently assumes that a postfix SMTP server is available on `localhost`. To install such
-an SMTP server on Ubuntu, complete the following steps:
+### Gmail
 
-* Install the SMTP server by running `sudo apt-get install postfix`
-* After entering the above command it would ask for the basic settings as follows:
- * `General type of mail configuration:  Internet site`
- * `system mail name: "your_system_name"`
- * `Root and postmaster mail recipient: "leave it blank"`
+To send email notifications, the server currently requires a working Gmail account. To set this up, create a file called `secret.properties` in `server/src/main/resources` with the following contents:
 
-Instructions taken from [this link](http://www.mindfiresolutions.com/Configure-SMTP-For-Localhost-In-Ubuntu-2421.php).
+```properties
+username=<gmail-username>
+password=<gmail-password>
+```
+
+### Browsers
+
+The server internally runs browsers to scrape search engines. It currently works with [Firefox](https://www.mozilla.org/en-US/firefox/new/) and [PhantomJS](http://phantomjs.org/download.html), both of which have to be installed on the machine running the server.
