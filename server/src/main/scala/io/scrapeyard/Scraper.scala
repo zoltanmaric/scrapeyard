@@ -36,3 +36,5 @@ trait Scraper extends Matchers with Eventually {
     }
   }
 }
+
+class NonExistentConnectionException(msg: String) extends RuntimeException

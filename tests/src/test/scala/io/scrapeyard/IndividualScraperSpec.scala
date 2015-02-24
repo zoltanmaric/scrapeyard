@@ -45,7 +45,23 @@ class IndividualScraperSpec extends WordSpecLike with Matchers with BeforeAndAft
     val res = qatarScraper.scrape(badParams)
 
     res match {
-      case Failure(_: IllegalArgumentException) => // expected
+      case Failure(_: NonExistentConnectionException) => // expected
+      case other => fail("Unexpected search outcome: " + other)
+    }
+  }
+
+  "unavailable single search on qatar scraper throws non-existent connection exception 2" in {
+    val badParams = SearchParams(
+      "ZAG",    // Zagreb
+      "GIG",    // Rio de Janeiro
+      DateTime.parse("2015-07-29T00:00:00Z"),
+      DateTime.parse("2015-08-29T00:00:00Z")
+    )
+
+    val res = qatarScraper.scrape(badParams)
+
+    res match {
+      case Failure(_: NonExistentConnectionException) => // expected
       case other => fail("Unexpected search outcome: " + other)
     }
   }

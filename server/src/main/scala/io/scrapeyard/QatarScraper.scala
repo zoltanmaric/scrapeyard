@@ -34,11 +34,16 @@ object QatarScraper extends Scraper with Firefox {
 
     click on "bookFlight"
 
-    val price = eventually(timeout(2 minutes), interval(200 millis)) {
-      val total = find("tripGrandTotal").get.text
-      total.length should be > 4
-      total.replaceAll("""\s""", " ")
+    eventually(timeout(2 minutes), interval(200 millis)) {
+      assert(find("tripGrandTotal").isDefined || find("warnFullSearchMsg").isDefined)
     }
+
+    if (find("warnFullSearchMsg").isDefined)
+      throw new NonExistentConnectionException(ps.toString)
+
+    val total = find("tripGrandTotal").get.text
+    total.length should be > 4
+    val price = total.replaceAll("""\s""", " ")
 
     SearchYield(price, host)
   }
@@ -72,7 +77,7 @@ object QatarScraper extends Scraper with Firefox {
 
     if (suggested.get.text contains
       "There are no cities matching your request.")
-      throw new scala.IllegalArgumentException(s"Airport not found: $airport.")
+      throw new NonExistentConnectionException(s"Airport not found: $airport.")
 
     assert(suggested.get.text contains s"($airport)")
     click on "ui-active-menuitem"
