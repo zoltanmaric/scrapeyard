@@ -48,8 +48,8 @@ class ScrapeControllerActorTest extends WordSpecLike {
     val params2 = SearchParams("ZAG", "OST", dep, ret)
     scraper.expectMsgAllOf(2.seconds, params1, params2)
 
-    val yld1 = SearchYield("2 USD", "url1")
-    val yld2 = SearchYield("4 USD", "url2")
+    val yld1 = SearchYield(2, "USD", "url1")
+    val yld2 = SearchYield(4, "USD", "url2")
     scraper.send(controller, (params1, Success(yld1)))
     scraper.send(controller, (params2, Success(yld2)))
 

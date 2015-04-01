@@ -45,10 +45,10 @@ with ImplicitSender with WordSpecLike with Matchers with BeforeAndAfterAll {
         val params2 = SearchParams("ZAG", "OST", dep, ret)
 
         val results = Set(
-          SearchResult(params1, SearchYield("100", "EUR")),
-          SearchResult(params2, SearchYield("100", "EUR")),
-          SearchResult(params1, SearchYield("200", "USD")),
-          SearchResult(params2, SearchYield("200", "USD"))
+          SearchResult(params1, SearchYield(100, "EUR", "url")),
+          SearchResult(params2, SearchYield(100, "EUR", "url")),
+          SearchResult(params1, SearchYield(200, "USD", "url")),
+          SearchResult(params2, SearchYield(200, "USD", "url"))
         )
 
         val expected = SendResults(
@@ -79,7 +79,7 @@ class Forwarder(target: ActorRef) extends Actor {
 class FakeScraperActor(amount: String, currency: String) extends Actor {
   def receive = {
     case ps: SearchParams =>
-      sender ! (ps, Success(SearchYield(amount, currency)))
+      sender ! (ps, Success(SearchYield(amount.toDouble, currency, "url")))
   }
 }
 

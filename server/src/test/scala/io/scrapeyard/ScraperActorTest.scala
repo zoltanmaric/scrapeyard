@@ -28,7 +28,7 @@ with ImplicitSender with WordSpecLike with BeforeAndAfter {
 
     "scrape succeeds" should {
       "return a success message" in {
-        val success = Success(SearchYield("2 USD", "url1"))
+        val success = Success(SearchYield(2, "USD", "url1"))
 
         val successScraper = new FakeScraper {
           override def scrape(ps: SearchParams): Try[SearchYield] = success
