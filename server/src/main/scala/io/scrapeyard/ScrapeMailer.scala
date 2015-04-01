@@ -5,6 +5,7 @@ import com.typesafe.config.ConfigFactory
 import courier._, Defaults._
 import io.scrapeyard.Models.SearchResult
 
+import scala.collection.SortedSet
 import scala.concurrent.ExecutionContext.global
 
 import akka.actor.{ActorLogging, Actor}
@@ -38,7 +39,8 @@ class MailerActor extends Actor with ActorLogging {
 
   def receive = {
     case SendResults(to, subject, results) =>
-      val body = results.toJson.prettyPrint
+      val sortedResults = results.toVector.sortBy(r => (r.yld.currency, r.yld.value))
+      val body = sortedResults.toJson.prettyPrint
       log.debug(s"sending email: $to:\n$body")
       sendMail(to, subject, body)
   }

@@ -27,7 +27,9 @@ class ScrapeControllerActor extends Actor with ActorLogging {
       paramSet -= params
       resp match {
         case Success(yld) =>
-          results += SearchResult(params, yld)
+          val rslt = SearchResult(params, yld)
+          results += rslt
+          log.info(rslt.toString)
         case Failure(ne: NonExistentConnectionException) =>
           log.info("Search failed for {}: {}", params, ne.getMessage)
         case Failure(t) =>

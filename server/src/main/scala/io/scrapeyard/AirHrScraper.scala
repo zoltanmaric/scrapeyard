@@ -25,8 +25,10 @@ object AirHrScraper extends Scraper with WebBrowser {
     }
 
     val price = find(cssSelector("div[class^=flight_price_v1] span[class=pull-right]")).get.text
+      .trim.split("\\s")
+    val (value, currency) = (price(0), price(1))
 
-    SearchYield(price, query)
+    SearchYield(value.toDouble, currency, query)
   }
 
   override protected def dateFormatter: DateTimeFormatter = DateTimeFormat.forPattern("dd.MM.yyyy")

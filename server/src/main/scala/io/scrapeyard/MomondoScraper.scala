@@ -30,10 +30,9 @@ object MomondoScraper extends Scraper with WebBrowser {
       find("searchProgressText").get.text should be ("Search complete")
     }
 
-    val value = find(cssSelector("span[class=value]")).get.text
-    val currency = find(cssSelector("span[class=unit]")).get.text
-    val price = value + " " + currency
+    val value = find(cssSelector("span[class=value]")).get.text.trim.replaceAll(",", "")
+    val currency = find(cssSelector("span[class=unit]")).get.text.trim
 
-    SearchYield(price, query)
+    SearchYield(value.toDouble, currency, query)
   }
 }

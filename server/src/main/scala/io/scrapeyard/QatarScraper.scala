@@ -43,9 +43,10 @@ object QatarScraper extends Scraper with Firefox {
 
     val total = find("tripGrandTotal").get.text
     total.length should be > 4
-    val price = total.replaceAll("""\s""", " ")
+    val price = total.trim.replaceAll("""\s+""", " ").split(" ")
+    val (value, currency) = (price(0), price(1))
 
-    SearchYield(price, host)
+    SearchYield(value.replaceAll(",", "").toDouble, currency, host)
   }
 
   def enterDepartureAirport(org: String): Unit = {
