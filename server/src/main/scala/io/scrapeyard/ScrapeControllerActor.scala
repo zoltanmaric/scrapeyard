@@ -64,6 +64,7 @@ object ScrapeController {
       dest <- criteria.dests
       dep <- depDates
       ret <- retDates
+      if dep.compareTo(ret) <= 0
     } yield SearchParams(orig, dest, dep, ret)
 
     searches.toVector
