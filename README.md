@@ -27,7 +27,9 @@ Here's an example request:
   "depFrom": "2015-07-20",
   "depUntil": "2015-07-20",
   "retFrom": "2015-07-29",
-  "retUntil": "2015-07-30"
+  "retUntil": "2015-07-30",
+  "minStayDays": 9,
+  "maxStayDays": 10
  }
 }
 ```
@@ -38,10 +40,12 @@ which can be interpreted as
 * Arrive in Denpasar (Bali)
 * Depart on Jul 20, 2015
 * Return between Jul 29, 2015 and Jul 30, 2015
+* Stay **at least** 9 days
+* Stay **at most** 10 days
 * When done, send search results to `zoltanmaric@github.com`
 
 The server schedules one search for each combination of departure and destination airports, and departure and return dates; and sends the user an e-mail containing all the search results.
-The following is the body of an example result email:
+The following is (part of) the body of an example result email:
 
 ```json
 [{
