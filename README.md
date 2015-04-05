@@ -27,7 +27,9 @@ Here's an example request:
   "depFrom": "2015-07-20",
   "depUntil": "2015-07-20",
   "retFrom": "2015-07-29",
-  "retUntil": "2015-07-30"
+  "retUntil": "2015-07-30",
+  "minStayDays": 9,
+  "maxStayDays": 10
  }
 }
 ```
@@ -38,39 +40,26 @@ which can be interpreted as
 * Arrive in Denpasar (Bali)
 * Depart on Jul 20, 2015
 * Return between Jul 29, 2015 and Jul 30, 2015
+* Stay **at least** 9 days
+* Stay **at most** 10 days
 * When done, send search results to `zoltanmaric@github.com`
 
 The server schedules one search for each combination of departure and destination airports, and departure and return dates; and sends the user an e-mail containing all the search results.
-The following is the body of an example result email:
+The following is (part of) the body of an example result email:
 
 ```json
 [{
   "params": {
-    "origin": "ZAG",
-    "destination": "DPS",
-    "departure": "2015-07-20",
-    "returning": "2015-07-29"
-  },
-  "price": "7173 HRK",
-  "url": "http://avio.air.hr/airhr/ZAG/DPS/20.07.2015-29.07.2015/1/0/0/rt"
-}, {
-  "params": {
-    "origin": "ZAG",
-    "destination": "DPS",
-    "departure": "2015-07-20",
-    "returning": "2015-07-30"
-  },
-  "price": "7173 HRK",
-  "url": "http://avio.air.hr/airhr/ZAG/DPS/20.07.2015-30.07.2015/1/0/0/rt"
-}, {
-  "params": {
     "origin": "BUD",
     "destination": "DPS",
     "departure": "2015-07-20",
     "returning": "2015-07-29"
   },
-  "price": "6804 HRK",
-  "url": "http://avio.air.hr/airhr/BUD/DPS/20.07.2015-29.07.2015/1/0/0/rt"
+  "yld": {
+    "value": 674.0,
+    "currency": "EUR",
+    "url": "http://www.momondo.com/flightsearch/?Search=true&TripType=2&SegNo=2&SO0=BUD&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=BUD&SDP1=29-07-2015&AD=1&TK=ECO&DO=false&NA=false#Search=true&TripType=2&SegNo=2&SO0=BUD&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=BUD&SDP1=29-07-2015&AD=1&TK=ECO&DO=false&NA=false"
+  }
 }, {
   "params": {
     "origin": "BUD",
@@ -78,8 +67,35 @@ The following is the body of an example result email:
     "departure": "2015-07-20",
     "returning": "2015-07-30"
   },
-  "price": "6942 HRK",
-  "url": "http://avio.air.hr/airhr/BUD/DPS/20.07.2015-30.07.2015/1/0/0/rt"
+  "yld": {
+    "value": 674.0,
+    "currency": "EUR",
+    "url": "http://www.momondo.com/flightsearch/?Search=true&TripType=2&SegNo=2&SO0=BUD&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=BUD&SDP1=30-07-2015&AD=1&TK=ECO&DO=false&NA=false#Search=true&TripType=2&SegNo=2&SO0=BUD&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=BUD&SDP1=30-07-2015&AD=1&TK=ECO&DO=false&NA=false"
+  }
+}, {
+  "params": {
+    "origin": "ZAG",
+    "destination": "DPS",
+    "departure": "2015-07-20",
+    "returning": "2015-07-30"
+  },
+  "yld": {
+    "value": 894.0,
+    "currency": "EUR",
+    "url": "http://www.momondo.com/flightsearch/?Search=true&TripType=2&SegNo=2&SO0=ZAG&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=ZAG&SDP1=30-07-2015&AD=1&TK=ECO&DO=false&NA=false#Search=true&TripType=2&SegNo=2&SO0=ZAG&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=ZAG&SDP1=30-07-2015&AD=1&TK=ECO&DO=false&NA=false"
+  }
+}, {
+  "params": {
+    "origin": "ZAG",
+    "destination": "DPS",
+    "departure": "2015-07-20",
+    "returning": "2015-07-29"
+  },
+  "yld": {
+    "value": 950.0,
+    "currency": "EUR",
+    "url": "http://www.momondo.com/flightsearch/?Search=true&TripType=2&SegNo=2&SO0=ZAG&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=ZAG&SDP1=29-07-2015&AD=1&TK=ECO&DO=false&NA=false#Search=true&TripType=2&SegNo=2&SO0=ZAG&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=ZAG&SDP1=29-07-2015&AD=1&TK=ECO&DO=false&NA=false"
+  }
 }]
 ```
 
