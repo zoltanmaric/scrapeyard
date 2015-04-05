@@ -50,31 +50,16 @@ The following is (part of) the body of an example result email:
 ```json
 [{
   "params": {
-    "origin": "ZAG",
-    "destination": "DPS",
-    "departure": "2015-07-20",
-    "returning": "2015-07-29"
-  },
-  "price": "7173 HRK",
-  "url": "http://avio.air.hr/airhr/ZAG/DPS/20.07.2015-29.07.2015/1/0/0/rt"
-}, {
-  "params": {
-    "origin": "ZAG",
-    "destination": "DPS",
-    "departure": "2015-07-20",
-    "returning": "2015-07-30"
-  },
-  "price": "7173 HRK",
-  "url": "http://avio.air.hr/airhr/ZAG/DPS/20.07.2015-30.07.2015/1/0/0/rt"
-}, {
-  "params": {
     "origin": "BUD",
     "destination": "DPS",
     "departure": "2015-07-20",
     "returning": "2015-07-29"
   },
-  "price": "6804 HRK",
-  "url": "http://avio.air.hr/airhr/BUD/DPS/20.07.2015-29.07.2015/1/0/0/rt"
+  "yld": {
+    "value": 674.0,
+    "currency": "EUR",
+    "url": "http://www.momondo.com/flightsearch/?Search=true&TripType=2&SegNo=2&SO0=BUD&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=BUD&SDP1=29-07-2015&AD=1&TK=ECO&DO=false&NA=false#Search=true&TripType=2&SegNo=2&SO0=BUD&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=BUD&SDP1=29-07-2015&AD=1&TK=ECO&DO=false&NA=false"
+  }
 }, {
   "params": {
     "origin": "BUD",
@@ -82,8 +67,35 @@ The following is (part of) the body of an example result email:
     "departure": "2015-07-20",
     "returning": "2015-07-30"
   },
-  "price": "6942 HRK",
-  "url": "http://avio.air.hr/airhr/BUD/DPS/20.07.2015-30.07.2015/1/0/0/rt"
+  "yld": {
+    "value": 674.0,
+    "currency": "EUR",
+    "url": "http://www.momondo.com/flightsearch/?Search=true&TripType=2&SegNo=2&SO0=BUD&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=BUD&SDP1=30-07-2015&AD=1&TK=ECO&DO=false&NA=false#Search=true&TripType=2&SegNo=2&SO0=BUD&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=BUD&SDP1=30-07-2015&AD=1&TK=ECO&DO=false&NA=false"
+  }
+}, {
+  "params": {
+    "origin": "ZAG",
+    "destination": "DPS",
+    "departure": "2015-07-20",
+    "returning": "2015-07-30"
+  },
+  "yld": {
+    "value": 894.0,
+    "currency": "EUR",
+    "url": "http://www.momondo.com/flightsearch/?Search=true&TripType=2&SegNo=2&SO0=ZAG&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=ZAG&SDP1=30-07-2015&AD=1&TK=ECO&DO=false&NA=false#Search=true&TripType=2&SegNo=2&SO0=ZAG&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=ZAG&SDP1=30-07-2015&AD=1&TK=ECO&DO=false&NA=false"
+  }
+}, {
+  "params": {
+    "origin": "ZAG",
+    "destination": "DPS",
+    "departure": "2015-07-20",
+    "returning": "2015-07-29"
+  },
+  "yld": {
+    "value": 950.0,
+    "currency": "EUR",
+    "url": "http://www.momondo.com/flightsearch/?Search=true&TripType=2&SegNo=2&SO0=ZAG&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=ZAG&SDP1=29-07-2015&AD=1&TK=ECO&DO=false&NA=false#Search=true&TripType=2&SegNo=2&SO0=ZAG&SD0=DPS&SDP0=20-07-2015&SO1=DPS&SD1=ZAG&SDP1=29-07-2015&AD=1&TK=ECO&DO=false&NA=false"
+  }
 }]
 ```
 
