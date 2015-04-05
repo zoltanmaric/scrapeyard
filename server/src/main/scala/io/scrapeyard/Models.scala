@@ -13,8 +13,8 @@ object Models {
                                 depUntil: DateTime,
                                 retFrom: DateTime,
                                 retUntil: DateTime,
-                                minStay: Int,
-                                maxStay: Int
+                                minStayDays: Int,
+                                maxStayDays: Int
                                 )
   
   case class SearchRequest(email: String, criteria: BatchSearchCriteria)

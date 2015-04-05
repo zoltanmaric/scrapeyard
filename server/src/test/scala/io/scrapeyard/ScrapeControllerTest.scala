@@ -13,8 +13,8 @@ class ScrapeControllerTest extends WordSpecLike with Matchers {
       DateTime.parse("2015-05-21T00:00:00Z"),
       DateTime.parse("2015-07-20T00:00:00Z"),
       DateTime.parse("2015-07-31T00:00:00Z"),
-      minStay = 0,
-      maxStay = 100
+      minStayDays = 0,
+      maxStayDays = 100
     )
 
     val searches = ScrapeController.toSearchParams(criteria)
@@ -40,8 +40,8 @@ class ScrapeControllerTest extends WordSpecLike with Matchers {
       DateTime.parse("2015-11-21T00:00:00Z"),
       DateTime.parse("2015-11-20T00:00:00Z"),
       DateTime.parse("2015-11-20T00:00:00Z"),
-      minStay = 0,
-      maxStay = 1
+      minStayDays = 0,
+      maxStayDays = 1
     )
 
     val searches = ScrapeController.toSearchParams(criteria)
@@ -66,8 +66,8 @@ class ScrapeControllerTest extends WordSpecLike with Matchers {
       DateTime.parse("2015-05-27T00:00:00Z"),
       DateTime.parse("2015-05-28T00:00:00Z"),
       DateTime.parse("2015-06-03T00:00:00Z"),
-      minStay = 7,
-      maxStay = 7
+      minStayDays = 7,
+      maxStayDays = 7
     )
 
     val searches = ScrapeController.toSearchParams(criteria)

@@ -38,7 +38,7 @@ object QatarScraper extends Scraper with Firefox {
       assert(find("tripGrandTotal").isDefined || find("warnAvSearchMsg").isDefined)
     }
 
-    if (find("warnAvSearchMsg").isDefined)
+    if (find("warnAvSearchMsg").isDefined && !find("warnAvSearchMsg").get.text.isEmpty)
       throw new NonExistentConnectionException(ps.toString)
 
     val total = find("tripGrandTotal").get.text

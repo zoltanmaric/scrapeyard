@@ -53,7 +53,7 @@ object ScrapeController {
       .takeWhile(_.compareTo(criteria.depUntil) <= 0)
     val periods = depDates.flatMap{ dep =>
       for {
-        days <- criteria.minStay to criteria.maxStay
+        days <- criteria.minStayDays to criteria.maxStayDays
         ret = dep.plusDays(days)
         retUntil = criteria.retUntil
         retFrom = criteria.retFrom
