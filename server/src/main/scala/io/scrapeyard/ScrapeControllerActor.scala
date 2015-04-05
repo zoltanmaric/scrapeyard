@@ -2,6 +2,7 @@ package io.scrapeyard
 
 import akka.actor.{Actor, ActorLogging, ActorRef}
 import io.scrapeyard.Models._
+import org.joda.time.{Interval, Period}
 
 import scala.util.{Failure, Success, Try}
 
@@ -48,23 +49,22 @@ object ScrapeController {
   case class ControllerReq(criteria: BatchSearchCriteria, scraperRef: ActorRef)
 
   def toSearchParams(criteria: BatchSearchCriteria): Seq[SearchParams] = {
-    var depDates = Vector(criteria.depFrom)
-    while(depDates.last.compareTo(criteria.depUntil) < 0) {
-      depDates = depDates :+ depDates.last.plusDays(1)
+    val depDates = Stream.iterate(criteria.depFrom)(_.plusDays(1))
+      .takeWhile(_.compareTo(criteria.depUntil) <= 0)
+    val periods = depDates.flatMap{ dep =>
+      for {
+        days <- criteria.minStay to criteria.maxStay
+        ret = dep.plusDays(days)
+        retUntil = criteria.retUntil
+        retFrom = criteria.retFrom
+        if !retFrom.isAfter(ret) && !retUntil.isBefore(ret)
+      } yield (dep, ret)
     }
-
-    var retDates = Vector(criteria.retFrom)
-    while(retDates.last.compareTo(criteria.retUntil) < 0) {
-      retDates = retDates :+ retDates.last.plusDays(1)
-    }
-
 
     val searches = for {
       orig <- criteria.origs
       dest <- criteria.dests
-      dep <- depDates
-      ret <- retDates
-      if dep.compareTo(ret) <= 0
+      (dep, ret) <- periods
     } yield SearchParams(orig, dest, dep, ret)
 
     searches.toVector

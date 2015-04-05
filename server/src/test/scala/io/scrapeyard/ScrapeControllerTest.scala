@@ -1,7 +1,7 @@
 package io.scrapeyard
 
 import io.scrapeyard.Models.BatchSearchCriteria
-import org.joda.time.DateTime
+import org.joda.time.{Duration, DateTime}
 import org.scalatest.{Matchers, WordSpecLike}
 
 class ScrapeControllerTest extends WordSpecLike with Matchers {
@@ -12,7 +12,9 @@ class ScrapeControllerTest extends WordSpecLike with Matchers {
       DateTime.parse("2015-05-20T00:00:00Z"),
       DateTime.parse("2015-05-21T00:00:00Z"),
       DateTime.parse("2015-07-20T00:00:00Z"),
-      DateTime.parse("2015-07-31T00:00:00Z")
+      DateTime.parse("2015-07-31T00:00:00Z"),
+      minStay = 0,
+      maxStay = 100
     )
 
     val searches = ScrapeController.toSearchParams(criteria)
@@ -37,7 +39,9 @@ class ScrapeControllerTest extends WordSpecLike with Matchers {
       DateTime.parse("2015-11-20T00:00:00Z"),
       DateTime.parse("2015-11-21T00:00:00Z"),
       DateTime.parse("2015-11-20T00:00:00Z"),
-      DateTime.parse("2015-11-20T00:00:00Z")
+      DateTime.parse("2015-11-20T00:00:00Z"),
+      minStay = 0,
+      maxStay = 1
     )
 
     val searches = ScrapeController.toSearchParams(criteria)
@@ -51,6 +55,29 @@ class ScrapeControllerTest extends WordSpecLike with Matchers {
       assert(s.departure.compareTo(criteria.depUntil) <= 0)
       assert(s.returning.compareTo(criteria.retFrom) >= 0)
       assert(s.returning.compareTo(criteria.retUntil) <= 0)
+    }
+  }
+
+  "creates 7 week-long stay searches" in {
+    val criteria = BatchSearchCriteria(
+      Set("ZAG"),
+      Set("DPS"),
+      DateTime.parse("2015-05-21T00:00:00Z"),
+      DateTime.parse("2015-05-27T00:00:00Z"),
+      DateTime.parse("2015-05-28T00:00:00Z"),
+      DateTime.parse("2015-06-03T00:00:00Z"),
+      minStay = 7,
+      maxStay = 7
+    )
+
+    val searches = ScrapeController.toSearchParams(criteria)
+    // the stay must be 7 days, and there are 7 possible departure and return dates
+    searches.size should be (7)
+
+    searches foreach { s =>
+      assert(s.origin === "ZAG")
+      assert(s.destination === "DPS")
+      assert(new Duration(s.departure, s.returning).toStandardDays.getDays == 7)
     }
   }
 }

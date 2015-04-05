@@ -3,7 +3,7 @@ package io.scrapeyard
 import akka.actor._
 import akka.testkit.{ImplicitSender, TestKit, TestProbe}
 import io.scrapeyard.Models._
-import org.joda.time.DateTime
+import org.joda.time.{Duration, DateTime}
 import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 
 import scala.util.Success
@@ -25,6 +25,7 @@ with ImplicitSender with WordSpecLike with Matchers with BeforeAndAfterAll {
 
         val dep = DateTime.parse("2015-05-20T00:00:00Z")
         val ret = DateTime.parse("2015-07-20T00:00:00Z")
+        val stayDays = new Duration(dep, ret).toStandardDays.getDays
         // create batch search criteria with fixed departure airport,
         // departure and return dates, and two possible destination
         // airports
@@ -34,7 +35,9 @@ with ImplicitSender with WordSpecLike with Matchers with BeforeAndAfterAll {
           dep,
           dep,
           ret,
-          ret
+          ret,
+          stayDays,
+          stayDays
         )
 
         val req = SearchRequest("user@mail.com", criteria)

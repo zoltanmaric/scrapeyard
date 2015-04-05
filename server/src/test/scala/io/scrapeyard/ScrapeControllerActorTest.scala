@@ -4,7 +4,7 @@ import akka.actor.{Actor, ActorRef, ActorSystem, Props}
 import akka.testkit.TestProbe
 import io.scrapeyard.Models._
 import io.scrapeyard.ScrapeController.ControllerReq
-import org.joda.time.DateTime
+import org.joda.time.{Duration, DateTime}
 import org.scalatest.WordSpecLike
 
 import scala.concurrent.duration._
@@ -30,6 +30,7 @@ class ScrapeControllerActorTest extends WordSpecLike {
 
     val dep = DateTime.parse("2015-05-20T00:00:00Z")
     val ret = DateTime.parse("2015-07-20T00:00:00Z")
+    val stayDays = new Duration(dep, ret).toStandardDays.getDays
     // create batch search criteria with fixed departure airport,
     // departure and return dates, and two possible destination
     // airports
@@ -39,7 +40,9 @@ class ScrapeControllerActorTest extends WordSpecLike {
       dep,
       dep,
       ret,
-      ret
+      ret,
+      stayDays,
+      stayDays
     )
 
     dispatcher.send(controller, ControllerReq(criteria, scraper.ref))

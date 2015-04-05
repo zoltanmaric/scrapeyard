@@ -38,7 +38,9 @@ class ScheduleSearchSpec extends WordSpecLike with Matchers with Eventually {
         |  "depFrom": "2015-07-17",
         |  "depUntil": "2015-07-17",
         |  "retFrom": "2015-07-29",
-        |  "retUntil": "2015-07-29"
+        |  "retUntil": "2015-07-29",
+        |  "minStay": 12,
+        |  "maxStay": 12
         | }
         |}
       """.stripMargin

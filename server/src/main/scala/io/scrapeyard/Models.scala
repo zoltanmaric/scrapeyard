@@ -12,7 +12,9 @@ object Models {
                                 depFrom: DateTime,
                                 depUntil: DateTime,
                                 retFrom: DateTime,
-                                retUntil: DateTime
+                                retUntil: DateTime,
+                                minStay: Int,
+                                maxStay: Int
                                 )
   
   case class SearchRequest(email: String, criteria: BatchSearchCriteria)
@@ -45,7 +47,7 @@ object ModelsJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
     }
   }
 
-  implicit val BscFormat = jsonFormat6(BatchSearchCriteria)
+  implicit val BscFormat = jsonFormat8(BatchSearchCriteria)
   implicit val SearchReqFormat = jsonFormat2(SearchRequest)
   implicit val SearchParamsFormat = jsonFormat4(SearchParams)
   implicit val SearchYldFormat = jsonFormat3(SearchYield)
