@@ -35,10 +35,10 @@ object QatarScraper extends Scraper with Firefox {
     click on "bookFlight"
 
     eventually(timeout(2 minutes), interval(200 millis)) {
-      assert(find("tripGrandTotal").isDefined || find("warnFullSearchMsg").isDefined)
+      assert(find("tripGrandTotal").isDefined || find("warnAvSearchMsg").isDefined)
     }
 
-    if (find("warnFullSearchMsg").isDefined)
+    if (find("warnAvSearchMsg").isDefined)
       throw new NonExistentConnectionException(ps.toString)
 
     val total = find("tripGrandTotal").get.text
