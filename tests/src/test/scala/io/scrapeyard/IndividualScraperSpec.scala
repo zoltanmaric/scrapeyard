@@ -34,7 +34,7 @@ class IndividualScraperSpec extends WordSpecLike with Matchers with BeforeAndAft
     res.url should be ("http://www.qatarairways.com")
   }
 
-  "unavailable single search on qatar scraper throws illegal argument exception" in {
+  "single search unavailable in drop-down on qatar scraper throws illegal argument exception" in {
     val badParams = SearchParams(
       "LJU",    // Ljubljana
       "GIG",    // Rio de Janeiro
@@ -50,12 +50,12 @@ class IndividualScraperSpec extends WordSpecLike with Matchers with BeforeAndAft
     }
   }
 
-  "unavailable single search on qatar scraper throws non-existent connection exception 2" in {
+  "single search unavailable after submit on qatar scraper throws non-existent connection exception" in {
     val badParams = SearchParams(
       "ZAG",    // Zagreb
       "GIG",    // Rio de Janeiro
-      DateTime.parse("2015-07-29T00:00:00Z"),
-      DateTime.parse("2015-08-29T00:00:00Z")
+      DateTime.parse("2016-03-04T00:00:00Z"),
+      DateTime.parse("2016-03-05T00:00:00Z")
     )
 
     val res = qatarScraper.scrape(badParams)

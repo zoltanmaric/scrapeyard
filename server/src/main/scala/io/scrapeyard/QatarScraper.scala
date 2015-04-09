@@ -11,7 +11,7 @@ import scala.util.Try
 // val ff = new FirefoxDriver with Firefox
 object QatarScraper extends Scraper with Firefox {
 
-  val host = "http://www.qatarairways.com"
+  val host = "http://www.qatarairways.com/global/en"
 
   override def scrape(ps: SearchParams): Try[SearchYield] = Try {
     val StringSearchParams(org, dst, dep, ret) = toStringSearchParams(ps)
@@ -35,10 +35,10 @@ object QatarScraper extends Scraper with Firefox {
     click on "bookFlight"
 
     eventually(timeout(2 minutes), interval(200 millis)) {
-      assert(find("tripGrandTotal").isDefined || find("warnAvSearchMsg").isDefined)
+      assert(find("tripGrandTotal").isDefined || find("warnFullSearch").isDefined)
     }
 
-    if (find("warnAvSearchMsg").isDefined && !find("warnAvSearchMsg").get.text.isEmpty)
+    if (find("warnFullSearch").isDefined)
       throw new NonExistentConnectionException(ps.toString)
 
     val total = find("tripGrandTotal").get.text
