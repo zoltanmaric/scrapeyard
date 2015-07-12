@@ -7,13 +7,11 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import scala.util.Failure
 
 class IndividualScraperSpec extends WordSpecLike with Matchers with BeforeAndAfterAll {
-  lazy val qatarScraper = QatarScraper
-
   val params = SearchParams(
     "ZAG",
     "DPS",
-    DateTime.parse("2015-07-10T00:00:00Z"),
-    DateTime.parse("2015-07-25T00:00:00Z")
+    DateTime.parse("2015-09-10T00:00:00Z"),
+    DateTime.parse("2015-09-25T00:00:00Z")
   )
 
   "single search on air.hr scraper" in {
@@ -29,20 +27,20 @@ class IndividualScraperSpec extends WordSpecLike with Matchers with BeforeAndAft
   }
 
   "single search on qatar scraper" in {
-    val res = qatarScraper.scrape(params).get
+    val res = QatarScraper.scrape(params).get
     res.currency should be ("HRK")
-    res.url should be ("http://www.qatarairways.com")
+    res.url shouldEqual QatarScraper.host
   }
 
   "single search unavailable in drop-down on qatar scraper throws illegal argument exception" in {
     val badParams = SearchParams(
       "LJU",    // Ljubljana
       "GIG",    // Rio de Janeiro
-      DateTime.parse("2015-07-10T00:00:00Z"),
-      DateTime.parse("2015-07-25T00:00:00Z")
+      DateTime.parse("2016-07-10T00:00:00Z"),
+      DateTime.parse("2016-07-25T00:00:00Z")
     )
 
-    val res = qatarScraper.scrape(badParams)
+    val res = QatarScraper.scrape(badParams)
 
     res match {
       case Failure(_: NonExistentConnectionException) => // expected
@@ -54,11 +52,11 @@ class IndividualScraperSpec extends WordSpecLike with Matchers with BeforeAndAft
     val badParams = SearchParams(
       "ZAG",    // Zagreb
       "GIG",    // Rio de Janeiro
-      DateTime.parse("2016-03-04T00:00:00Z"),
-      DateTime.parse("2016-03-05T00:00:00Z")
+      DateTime.parse("2016-07-04T00:00:00Z"),
+      DateTime.parse("2016-07-05T00:00:00Z")
     )
 
-    val res = qatarScraper.scrape(badParams)
+    val res = QatarScraper.scrape(badParams)
 
     res match {
       case Failure(_: NonExistentConnectionException) => // expected
@@ -66,6 +64,9 @@ class IndividualScraperSpec extends WordSpecLike with Matchers with BeforeAndAft
     }
   }
 
-  override protected def afterAll(): Unit =
-    qatarScraper.close()(qatarScraper.webDriver)
+  override def afterAll(): Unit = {
+    QatarScraper.webDriver.quit()
+    AirHrScraper.webDriver.quit()
+    MomondoScraper.webDriver.quit()
+  }
 }
