@@ -35,10 +35,10 @@ class ScheduleSearchSpec extends WordSpecLike with Matchers with Eventually {
         | "criteria": {
         |  "origs": ["ZAG"],
         |  "dests": ["DPS"],
-        |  "depFrom": "2015-07-17",
-        |  "depUntil": "2015-07-17",
-        |  "retFrom": "2015-07-29",
-        |  "retUntil": "2015-07-29",
+        |  "depFrom": "2015-12-17",
+        |  "depUntil": "2015-12-17",
+        |  "retFrom": "2015-12-29",
+        |  "retUntil": "2015-12-29",
         |  "minStayDays": 12,
         |  "maxStayDays": 12
         | }

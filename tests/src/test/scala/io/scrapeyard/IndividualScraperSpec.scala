@@ -10,8 +10,8 @@ class IndividualScraperSpec extends WordSpecLike with Matchers with BeforeAndAft
   val params = SearchParams(
     "ZAG",
     "DPS",
-    DateTime.parse("2015-09-10T00:00:00Z"),
-    DateTime.parse("2015-09-25T00:00:00Z")
+    DateTime.parse("2015-11-10T00:00:00Z"),
+    DateTime.parse("2015-11-25T00:00:00Z")
   )
 
   "single search on air.hr scraper" in {
