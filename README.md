@@ -118,4 +118,8 @@ password=<gmail-password>
 
 ### Browsers
 
-The server internally runs browsers to scrape search engines. It currently works with [Firefox](https://www.mozilla.org/en-US/firefox/new/) and [PhantomJS](http://phantomjs.org/download.html), both of which have to be installed on the machine running the server.
+The server internally runs browsers to scrape search engines. It currently works with [Firefox 41.0](https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/41.0/) and [PhantomJS 2.0.1](https://github.com/ariya/phantomjs/releases/tag/2.0.0), both of which have to be installed on the machine running the server.
+
+### Troubleshooting
+
+If you encounter `java.lang.NoClassDefFoundError` errors, that usually means that the version of Selenium is outdated for the version of Firefox you're using. Open [server/build.sbt](server/build.sbt) and update the version of `selenium-java` to the latest version found [here](http://search.maven.org/#search|ga|1|selenium-java).
