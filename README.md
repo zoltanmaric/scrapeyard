@@ -118,7 +118,7 @@ password=<gmail-password>
 
 ### Browsers
 
-The server internally runs browsers to scrape search engines. It currently works with [Firefox](https://www.mozilla.org/en-US/firefox/new/) and [PhantomJS](http://phantomjs.org/download.html), both of which have to be installed on the machine running the server.
+The server internally runs browsers to scrape search engines. It currently works with [Firefox 41.0](https://ftp.mozilla.org/pub/mozilla.org/firefox/releases/41.0/) and [PhantomJS 2.0.1](https://github.com/ariya/phantomjs/releases/tag/2.0.0), both of which have to be installed on the machine running the server.
 
 ### Troubleshooting
 
