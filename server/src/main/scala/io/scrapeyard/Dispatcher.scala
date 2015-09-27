@@ -6,7 +6,7 @@ import io.scrapeyard.ScrapeController.ControllerReq
 
 import scala.language.postfixOps
 
-class Dispatcher(scrapers: Set[ActorRef], mailerProps: Props) extends Actor
+class Dispatcher(scrapers: Map[String, ActorRef], mailerProps: Props) extends Actor
 with ActorLogging {
 
   var controllers = Set[ActorRef]()
@@ -16,10 +16,12 @@ with ActorLogging {
   def receive: Receive = expectReq
 
   def expectReq: Receive = {
-    case SearchRequest(email, criteria) =>
+    case SearchRequest(email, criteria, scraperNamesOpt) =>
+      val scraperNames = scraperNamesOpt.getOrElse(scrapers.keys.toSet)
       reqEmail = email
-      controllers = scrapers.map(_ => context.actorOf(Props[ScrapeControllerActor]))
-      controllers zip scrapers foreach {
+      val selectedScrapers = scrapers.filterKeys(scraperNames.contains).values.toSet
+      controllers = selectedScrapers.map(_ => context.actorOf(Props[ScrapeControllerActor]))
+      controllers zip selectedScrapers foreach {
         case (c, s) => c ! ControllerReq(criteria, s)
       }
       context.become(expectResp)

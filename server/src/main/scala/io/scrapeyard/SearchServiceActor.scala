@@ -11,16 +11,12 @@ class SearchServiceActor extends Actor with SearchService {
   // connects the services environment to the enclosing actor or test
   def actorRefFactory = context
 
-  lazy val scrapers: Set[ActorRef] = {
-    val scraperProps = Map(
-      "airHrScraper" -> Props(new ScraperActor(AirHrScraper)),
-      "momondoScraper" -> Props(new ScraperActor(MomondoScraper)),
-      "qatarScraper" -> Props(new ScraperActor(QatarScraper))
-    )
-
-    scraperProps.map {
-      case (name, props) => context.actorOf(props, name)
-    }.toSet
+  lazy val scrapers: Map[String, ActorRef] = Map(
+    "airHr" -> Props(new ScraperActor(AirHrScraper)),
+    "momondo" -> Props(new ScraperActor(MomondoScraper)),
+    "qatar" -> Props(new ScraperActor(QatarScraper))
+  ).map {
+    case (name, props) => name -> context.actorOf(props, name)
   }
 
   val mailerProps = Props[MailerActor]

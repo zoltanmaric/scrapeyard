@@ -16,8 +16,9 @@ object Models {
                                 minStayDays: Int,
                                 maxStayDays: Int
                                 )
-  
-  case class SearchRequest(email: String, criteria: BatchSearchCriteria)
+
+  /** @param selectedScrapers if `None`, all scrapers are run, if `Some`, only the selected scrapers are run. */
+  case class SearchRequest(email: String, criteria: BatchSearchCriteria, selectedScrapers: Option[Set[String]] = None)
 
   case class SearchParams(
                            origin: String,
@@ -48,7 +49,7 @@ object ModelsJsonSupport extends DefaultJsonProtocol with SprayJsonSupport {
   }
 
   implicit val BscFormat = jsonFormat8(BatchSearchCriteria)
-  implicit val SearchReqFormat = jsonFormat2(SearchRequest)
+  implicit val SearchReqFormat = jsonFormat3(SearchRequest)
   implicit val SearchParamsFormat = jsonFormat4(SearchParams)
   implicit val SearchYldFormat = jsonFormat3(SearchYield)
   implicit val SearchResFormat = jsonFormat2(SearchResult)
