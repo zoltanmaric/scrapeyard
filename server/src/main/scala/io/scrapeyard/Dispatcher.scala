@@ -8,9 +8,6 @@ import scala.language.postfixOps
 
 class Dispatcher(scrapers: Map[String, ActorRef], mailerProps: Props) extends Actor
 with ActorLogging {
-
-  var controllers = Set[ActorRef]()
-  var responseMap = Map[ActorRef, Set[SearchResult]]()
   var reqEmail: String = _
 
   def receive: Receive = expectReq
@@ -20,23 +17,23 @@ with ActorLogging {
       val scraperNames = scraperNamesOpt.getOrElse(scrapers.keys.toSet)
       reqEmail = email
       val selectedScrapers = scrapers.filterKeys(scraperNames.contains).values.toSet
-      controllers = selectedScrapers.map(_ => context.actorOf(Props[ScrapeControllerActor]))
+      val controllers = selectedScrapers.map(_ => context.actorOf(Props[ScrapeControllerActor]))
       controllers zip selectedScrapers foreach {
         case (c, s) => c ! ControllerReq(criteria, s)
       }
-      context.become(expectResp)
+      context.become(expectResp(controllers, Set()))
   }
 
-  def expectResp: Receive = {
+  private def updateState(expectedSenders: Set[ActorRef], receivedResults: Set[SearchResult]): Unit = {
+    if (expectedSenders.isEmpty) {
+      val mailer = context.actorOf(mailerProps)
+      mailer ! SendResults(reqEmail, "Search results", receivedResults)
+      context.stop(self)
+    } else context.become(expectResp(expectedSenders, receivedResults))
+  }
+
+  private def expectResp(expectedSenders: Set[ActorRef], receivedResults: Set[SearchResult]): Receive = {
     case results: Set[SearchResult] =>
-      responseMap += (sender -> results)
-      if (responseMap.keys == controllers) {
-        val results = responseMap.flatMap {
-          case (_, results1) => results1
-        }.toSet
-        val mailer = context.actorOf(mailerProps)
-        mailer ! SendResults(reqEmail, "Search results", results)
-        context.stop(self)
-      }
+      updateState(expectedSenders - sender(), receivedResults ++ results)
   }
 }
