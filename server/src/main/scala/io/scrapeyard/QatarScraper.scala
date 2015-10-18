@@ -2,15 +2,15 @@ package io.scrapeyard
 
 import io.scrapeyard.Models.{SearchParams, SearchYield}
 import org.joda.time.format.{DateTimeFormat, DateTimeFormatter}
-import org.scalatest.selenium.Firefox
+import org.scalatest.selenium.WebBrowser
 
 import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.Try
 
 // val ff = new FirefoxDriver with Firefox
-class QatarScraper extends Scraper with Firefox {
-
+class QatarScraper extends Scraper with WebBrowser {
+  implicit lazy val webDriver = new SilentPhantomJSDriver()
   val host = "http://www.qatarairways.com/global/en"
 
   override def scrape(ps: SearchParams): Try[SearchYield] = Try {
