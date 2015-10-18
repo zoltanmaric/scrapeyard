@@ -32,7 +32,7 @@ class QatarSpec extends WordSpecLike with Matchers with TestParams with BeforeAn
       }
     }
 
-    "throws non-existent connection exception when single search unavailable after submit" ignore {
+    "throw non-existent connection exception when single search unavailable after submit" ignore {
       val badParams = SearchParams(
         "ZAG",    // Zagreb
         "GIG",    // Rio de Janeiro
