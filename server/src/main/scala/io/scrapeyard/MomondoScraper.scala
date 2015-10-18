@@ -9,7 +9,7 @@ import scala.language.postfixOps
 import scala.util.Try
 
 // val ff = new FirefoxDriver with Firefox
-object MomondoScraper extends Scraper with WebBrowser {
+class MomondoScraper extends Scraper with WebBrowser {
 
   implicit val webDriver = new SilentPhantomJSDriver()
 

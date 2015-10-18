@@ -9,7 +9,7 @@ import scala.language.postfixOps
 import scala.util.Try
 
 // val ff = new FirefoxDriver with Firefox
-object QatarScraper extends Scraper with Firefox {
+class QatarScraper extends Scraper with Firefox {
 
   val host = "http://www.qatarairways.com/global/en"
 

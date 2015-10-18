@@ -8,9 +8,9 @@ import scala.concurrent.duration._
 import scala.language.postfixOps
 import scala.util.Try
 
-object AirHrScraper extends Scraper with WebBrowser {
+class AirHrScraper extends Scraper with WebBrowser {
 
-  implicit val webDriver = new SilentPhantomJSDriver()
+  implicit lazy val webDriver = new SilentPhantomJSDriver()
 
   override def scrape(ps: SearchParams): Try[SearchYield] = Try {
     val StringSearchParams(org, dst, dep, ret) = toStringSearchParams(ps)

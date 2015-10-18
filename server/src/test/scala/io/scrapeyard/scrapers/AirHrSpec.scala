@@ -1,18 +1,16 @@
 package io.scrapeyard.scrapers
 
 import io.scrapeyard.AirHrScraper
-import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+import org.scalatest.{Matchers, WordSpecLike}
 
-class AirHrSpec extends WordSpecLike with Matchers with TestParams with BeforeAndAfterAll {
+class AirHrSpec extends WordSpecLike with Matchers with TestParams {
   "AirHr scraper" should {
     "find cheapest flight" in {
-      val res = AirHrScraper.scrape(params).get
+      val scraper = new AirHrScraper()
+      val res = scraper.scrape(params).get
       res.currency should be("HRK")
       res.url should startWith("http://avio.air.hr")
+      scraper.webDriver.quit()
     }
-  }
-
-  override def afterAll(): Unit = {
-    AirHrScraper.webDriver.quit()
   }
 }

@@ -8,11 +8,12 @@ import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
 import scala.util.Failure
 
 class QatarSpec extends WordSpecLike with Matchers with TestParams with BeforeAndAfterAll {
+  lazy val scraper = new QatarScraper()
   "Qatar scraper" should {
     "find cheapest flight" in {
-      val res = QatarScraper.scrape(params).get
+      val res = scraper.scrape(params).get
       res.currency should be ("HRK")
-      res.url shouldEqual QatarScraper.host
+      res.url shouldEqual scraper.host
     }
 
     "throw illegal argument exception when single search unavailable in drop-down" ignore {
@@ -23,7 +24,7 @@ class QatarSpec extends WordSpecLike with Matchers with TestParams with BeforeAn
         DateTime.parse("2016-07-25T00:00:00Z")
       )
 
-      val res = QatarScraper.scrape(badParams)
+      val res = scraper.scrape(badParams)
 
       res match {
         case Failure(_: NonExistentConnectionException) => // expected
@@ -39,7 +40,7 @@ class QatarSpec extends WordSpecLike with Matchers with TestParams with BeforeAn
         DateTime.parse("2016-07-05T00:00:00Z")
       )
 
-      val res = QatarScraper.scrape(badParams)
+      val res = scraper.scrape(badParams)
 
       res match {
         case Failure(_: NonExistentConnectionException) => // expected
@@ -49,6 +50,6 @@ class QatarSpec extends WordSpecLike with Matchers with TestParams with BeforeAn
   }
 
   override def afterAll(): Unit = {
-    QatarScraper.webDriver.quit()
+    scraper.webDriver.quit()
   }
 }

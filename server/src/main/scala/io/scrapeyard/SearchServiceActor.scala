@@ -12,9 +12,9 @@ class SearchServiceActor extends Actor with SearchService {
   def actorRefFactory = context
 
   lazy val scrapers: Map[String, ActorRef] = Map(
-    "airHr" -> Props(new ScraperActor(AirHrScraper)),
-    "momondo" -> Props(new ScraperActor(MomondoScraper)),
-    "qatar" -> Props(new ScraperActor(QatarScraper))
+    "airHr" -> Props(new ScraperActor(new AirHrScraper)),
+    "momondo" -> Props(new ScraperActor(new MomondoScraper)),
+    "qatar" -> Props(new ScraperActor(new QatarScraper))
   ).map {
     case (name, props) => name -> context.actorOf(props, name)
   }
