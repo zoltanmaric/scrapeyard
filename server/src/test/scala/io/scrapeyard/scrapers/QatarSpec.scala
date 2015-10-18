@@ -15,7 +15,7 @@ class QatarSpec extends WordSpecLike with Matchers with TestParams with BeforeAn
       res.url shouldEqual QatarScraper.host
     }
 
-    "throw illegal argument exception when single search unavailable in drop-down" in {
+    "throw illegal argument exception when single search unavailable in drop-down" ignore {
       val badParams = SearchParams(
         "LJU",    // Ljubljana
         "GIG",    // Rio de Janeiro
@@ -31,7 +31,7 @@ class QatarSpec extends WordSpecLike with Matchers with TestParams with BeforeAn
       }
     }
 
-    "throws non-existent connection exception when single search unavailable after submit" in {
+    "throws non-existent connection exception when single search unavailable after submit" ignore {
       val badParams = SearchParams(
         "ZAG",    // Zagreb
         "GIG",    // Rio de Janeiro
