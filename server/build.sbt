@@ -13,7 +13,7 @@ libraryDependencies ++= {
   val sprayV = "1.3.2"
   Seq(
     "org.scalatest"           %% "scalatest"    % "2.2.2",
-    "org.seleniumhq.selenium" %  "selenium-java"     % "2.47.2",
+    "org.seleniumhq.selenium" %  "selenium-java"     % "2.48.2",
     "com.codeborne"           %  "phantomjsdriver"   % "1.2.1",
     "com.github.nscala-time"  %%  "nscala-time"  % "1.6.0",
     "org.jvnet.mock-javamail" %  "mock-javamail"     % "1.9" % "test",
