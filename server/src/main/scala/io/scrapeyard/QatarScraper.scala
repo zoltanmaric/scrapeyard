@@ -34,19 +34,24 @@ object QatarScraper extends Scraper with Firefox {
 
     click on "bookFlight"
 
-    eventually(timeout(2 minutes), interval(200 millis)) {
-      assert(find("warnAvSearch").isDefined)
+    val inboundSearch = eventually(timeout(2 minutes), interval(200 millis)) {
+      find(cssSelector("#outbound_tripDetails1 .radiobtn")).get
     }
 
-    if (find("warnFullSearch").isDefined || find("warnAvSearch").exists(_.isDisplayed))
-      throw new NonExistentConnectionException(ps.toString)
+    click on inboundSearch
+    click on cssSelector("#inbound_tripDetails1 .radiobtn")
+    click on "indexItinerarayContinue"
 
-    val total = find("tripGrandTotal").get.text
-    total.length should be > 4
-    val price = total.trim.replaceAll("""\s+""", " ").split(" ")
-    val (value, currency) = (price(0), price(1))
+//    if (find("warnFullSearch").isDefined || find("warnAvSearch").exists(_.isDisplayed))
+//      throw new NonExistentConnectionException(ps.toString)
 
-    SearchYield(value.replaceAll(",", "").toDouble, currency, host)
+
+    val value = eventually(timeout(2 minutes), interval(200 millis)) {
+      find("totalPrice").get.text
+    }
+    val currency = find(cssSelector("#totalPrice + .units")).get.text
+
+    SearchYield(value.toDouble, currency, host)
   }
 
   def enterDepartureAirport(org: String): Unit = {
