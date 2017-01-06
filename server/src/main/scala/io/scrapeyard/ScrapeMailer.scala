@@ -1,14 +1,12 @@
 package io.scrapeyard
 
 import javax.mail.internet._
+
+import akka.actor.{Actor, ActorLogging}
 import com.typesafe.config.ConfigFactory
-import courier._, Defaults._
+import courier.Defaults._
+import courier._
 import io.scrapeyard.Models.SearchResult
-
-import scala.collection.SortedSet
-import scala.concurrent.ExecutionContext.global
-
-import akka.actor.{ActorLogging, Actor}
 
 object ScrapeMailer {
 
@@ -33,9 +31,9 @@ object ScrapeMailer {
 case class SendResults(to: String, subject: String, results: Set[SearchResult])
 
 class MailerActor extends Actor with ActorLogging {
+  import ModelsJsonSupport._
   import ScrapeMailer._
   import spray.json._
-  import ModelsJsonSupport._
 
   def receive = {
     case SendResults(to, subject, results) =>
