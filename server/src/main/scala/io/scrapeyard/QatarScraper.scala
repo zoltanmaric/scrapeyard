@@ -1,3 +1,4 @@
+
 package io.scrapeyard
 
 import io.scrapeyard.Models.{SearchParams, SearchYield}

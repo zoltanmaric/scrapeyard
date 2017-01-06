@@ -1,27 +1,27 @@
 package io.scrapeyard
 
-import akka.actor.{Actor, ActorRef, Props}
+import akka.actor.{Actor, ActorContext, ActorRef, Props}
 import io.scrapeyard.Models.SearchRequest
 import spray.http.MediaTypes._
-import spray.routing.HttpService
+import spray.routing.{HttpService, Route}
 
 class SearchServiceActor extends Actor with SearchService {
 
   // the HttpService trait defines only one abstract member, which
   // connects the services environment to the enclosing actor or test
-  def actorRefFactory = context
+  def actorRefFactory: ActorContext = context
 
   lazy val scrapers: Map[String, ActorRef] = Map(
-    "airHr" -> Props(new ScraperActor(new AirHrScraper)),
-    "momondo" -> Props(new ScraperActor(new MomondoScraper)),
-    "qatar" -> Props(new ScraperActor(new QatarScraper))
+    //"airHr" -> Props(new ScraperActor(new AirHrScraper)),
+    "momondo" -> Props(new ScraperActor(new MomondoScraper))/*,
+    "qatar" -> Props(new ScraperActor(new QatarScraper))*/
   ).map {
     case (name, props) => name -> context.actorOf(props, name)
   }
 
-  val mailerProps = Props[MailerActor]
+  private val mailerProps = Props[MailerActor]
 
-  def createDispatcher = context.actorOf(Props(new Dispatcher(scrapers, mailerProps)))
+  def createDispatcher: ActorRef = context.actorOf(Props(new Dispatcher(scrapers, mailerProps)))
 
   // this actor only runs our route, but you could add
   // other things here, like request stream processing
@@ -36,7 +36,7 @@ trait SearchService extends HttpService {
 
   def createDispatcher: ActorRef
 
-  val searchRoute =
+  val searchRoute: Route =
     path("search") {
       get {
         respondWithMediaType(`text/html`) { // XML is marshalled to `text/xml` by default, so we simply override here
